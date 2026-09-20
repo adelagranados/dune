@@ -12,14 +12,16 @@ export const spacing = {
 export const radius = {
   sm: 12,
   md: 18,
-  lg: 26,
-  xl: 28,
+  lg: 24,
+  xl: 26,
+  '2xl': 28,
   full: 32,
 } as const;
 
 export const fontSize = {
   label: 11,
   secondary: 13,
+  button: 14,
   body: 15,
   heading3: 20,
   heading2: 24,

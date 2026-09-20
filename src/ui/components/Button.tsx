@@ -33,7 +33,7 @@ export function Button({ label, onPress, variant = 'primary', disabled = false, 
         style,
       ]}
     >
-      <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: textColor }}>{label}</Text>
+      <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.button, color: textColor }}>{label}</Text>
     </Pressable>
   );
 }
