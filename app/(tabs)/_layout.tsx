@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
+import { HomeIcon, SettingsIcon, StatsIcon } from '@/ui/icons';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
 export default function TabsLayout() {
@@ -19,9 +20,33 @@ export default function TabsLayout() {
         },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: t('tabs.home') }} />
-      <Tabs.Screen name="stats" options={{ title: t('tabs.stats') }} />
-      <Tabs.Screen name="settings" options={{ title: t('tabs.settings') }} />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: t('tabs.home'),
+          tabBarIcon: ({ focused, size }) => (
+            <HomeIcon color={focused ? colors.primary : colors.textSecondary} size={size} weight="regular" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="stats"
+        options={{
+          title: t('tabs.stats'),
+          tabBarIcon: ({ focused, size }) => (
+            <StatsIcon color={focused ? colors.primary : colors.textSecondary} size={size} weight="regular" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: t('tabs.settings'),
+          tabBarIcon: ({ focused, size }) => (
+            <SettingsIcon color={focused ? colors.primary : colors.textSecondary} size={size} weight="regular" />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
