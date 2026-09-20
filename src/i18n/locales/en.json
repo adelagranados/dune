@@ -1,6 +1,7 @@
 {
   "common": {
-    "appName": "Dune"
+    "appName": "Dune",
+    "continue": "Continue"
   },
   "tabs": {
     "home": "Home",
@@ -8,7 +9,22 @@
     "settings": "Settings"
   },
   "home": {
-    "placeholder": "Home"
+    "headline": "See where your time went.",
+    "emptyTitle": "No projects yet",
+    "emptyDescription": "Create your first project and start seeing how your time adds up.",
+    "newProject": "+ New project",
+    "projectsLabel": "Projects"
+  },
+  "createProject": {
+    "title": "New project",
+    "subtitle": "What are you making time for?",
+    "nameLabel": "Project name",
+    "namePlaceholder": "Dog App",
+    "categoryLabel": "Category",
+    "colorLabel": "Color",
+    "estimatedLabel": "Estimated time · optional",
+    "estimatedPlaceholder": "Optional",
+    "estimatedHint": "You can always add or change this later."
   },
   "stats": {
     "placeholder": "Stats"
