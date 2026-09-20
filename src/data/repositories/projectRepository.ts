@@ -27,6 +27,11 @@ export async function createProject(input: CreateProjectInput): Promise<Project>
   return project;
 }
 
+export async function getProjectById(id: string): Promise<Project | null> {
+  const rows = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  return rows[0] ?? null;
+}
+
 export type ProjectWithTotal = {
   project: Project;
   totalDurationMs: number;

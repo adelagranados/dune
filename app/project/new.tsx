@@ -156,6 +156,7 @@ export default function CreateProjectScreen() {
           onChangeText={setEstimatedHours}
           placeholder={t('createProject.estimatedPlaceholder')}
           keyboardType="decimal-pad"
+          suffix="h"
         />
       </View>
 

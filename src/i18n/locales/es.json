@@ -23,9 +23,20 @@
     "categoryLabel": "Categoría",
     "colorLabel": "Color",
     "estimatedLabel": "Tiempo estimado · opcional",
-    "estimatedPlaceholder": "Opcional",
+    "estimatedPlaceholder": "20",
     "estimatedHint": "Siempre puedes agregarlo o cambiarlo después.",
     "submit": "Crear proyecto"
+  },
+  "projectDetail": {
+    "back": "Proyectos",
+    "timeAccumulated": "Tiempo acumulado",
+    "noSessionsYet": "Aún no hay sesiones",
+    "sessionCount_one": "{{count}} sesión",
+    "sessionCount_other": "{{count}} sesiones",
+    "roughEstimate": "estimado {{estimate}}",
+    "yourSessions": "Tus sesiones",
+    "sessionsEmpty": "Tus sesiones registradas aparecerán aquí.",
+    "startTimer": "Iniciar timer"
   },
   "stats": {
     "placeholder": "Stats"

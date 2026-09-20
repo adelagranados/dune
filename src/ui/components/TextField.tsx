@@ -8,9 +8,10 @@ type TextFieldProps = {
   onChangeText: (value: string) => void;
   placeholder?: string;
   keyboardType?: KeyboardTypeOptions;
+  suffix?: string;
 };
 
-export function TextField({ label, value, onChangeText, placeholder, keyboardType }: TextFieldProps) {
+export function TextField({ label, value, onChangeText, placeholder, keyboardType, suffix }: TextFieldProps) {
   const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
 
   return (
@@ -27,24 +28,37 @@ export function TextField({ label, value, onChangeText, placeholder, keyboardTyp
       >
         {label}
       </Text>
-      <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={colors.textSecondary}
-        keyboardType={keyboardType}
+      <View
         style={{
+          flexDirection: 'row',
+          alignItems: 'center',
           borderWidth: 1,
           borderColor: colors.divider,
           borderRadius: radius.md,
           paddingHorizontal: spacing.lg,
-          paddingVertical: spacing.md,
-          fontFamily: fontFamily.body,
-          fontSize: fontSize.body,
-          color: colors.textPrimary,
           backgroundColor: colors.surface,
         }}
-      />
+      >
+        <TextInput
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={colors.textSecondary}
+          keyboardType={keyboardType}
+          style={{
+            flex: 1,
+            paddingVertical: spacing.md,
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.body,
+            color: colors.textPrimary,
+          }}
+        />
+        {suffix ? (
+          <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.textSecondary }}>
+            {suffix}
+          </Text>
+        ) : null}
+      </View>
     </View>
   );
 }

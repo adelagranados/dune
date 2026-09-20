@@ -118,7 +118,10 @@ export default function HomeScreen() {
               </Pressable>
             }
             renderItem={({ item }) => (
-              <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.md, gap: spacing.md }}>
+              <Pressable
+                onPress={() => router.push({ pathname: '/project/[id]', params: { id: item.project.id } })}
+                style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.md, gap: spacing.md }}
+              >
                 <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: item.project.color }} />
                 <Text
                   style={{
@@ -139,7 +142,7 @@ export default function HomeScreen() {
                 >
                   {formatDuration(item.totalDurationMs)}
                 </Text>
-              </View>
+              </Pressable>
             )}
           />
         </>
