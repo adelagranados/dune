@@ -10,12 +10,15 @@ import {
   Manrope_700Bold,
   useFonts as useBodyFonts,
 } from '@expo-google-fonts/manrope';
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { db, migrations } from '@/data/db/client';
 import { initI18n } from '@/i18n';
 import { useSettingsStore } from '@/state/useSettingsStore';
 import { ThemeProvider, useTheme } from '@/ui/theme/ThemeProvider';
@@ -24,6 +27,19 @@ void SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
   const { colors, colorScheme } = useTheme();
+  const { success, error } = useMigrations(db, migrations);
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <Text style={{ color: colors.textPrimary }}>Database migration failed: {error.message}</Text>
+      </View>
+    );
+  }
+
+  if (!success) {
+    return null;
+  }
 
   return (
     <>
