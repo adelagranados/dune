@@ -67,7 +67,7 @@ export default function CreateProjectScreen() {
       <Text
         style={{
           fontFamily: fontFamily.display,
-          fontSize: fontSize.heading1,
+          fontSize: fontSize.display,
           color: colors.textPrimary,
           marginTop: spacing.lg,
         }}

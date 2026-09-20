@@ -58,7 +58,7 @@ export default function ProjectDetailScreen() {
       <Text
         style={{
           fontFamily: fontFamily.displayItalic,
-          fontSize: fontSize.heading1,
+          fontSize: fontSize.display,
           color: colors.textPrimary,
           marginTop: spacing.xl,
         }}
@@ -100,7 +100,7 @@ export default function ProjectDetailScreen() {
         <Text
           style={{
             fontFamily: fontFamily.displayItalic,
-            fontSize: fontSize.heading1,
+            fontSize: fontSize.display,
             color: colors.textPrimary,
             marginTop: spacing.sm,
           }}

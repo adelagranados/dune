@@ -23,9 +23,12 @@ export const fontSize = {
   secondary: 13,
   button: 14,
   body: 15,
+  wordmark: 18,
   heading3: 20,
-  heading2: 24,
-  heading1: 39,
+  heading2: 26,
+  heading1: 34,
+  display: 40,
+  displayLarge: 48,
 } as const;
 
 export const fontFamily = {

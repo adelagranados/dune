@@ -39,7 +39,7 @@ export default function HomeScreen() {
       <Text
         style={{
           fontFamily: fontFamily.wordmark,
-          fontSize: 18,
+          fontSize: fontSize.wordmark,
           letterSpacing: 5.4,
           color: colors.textPrimary,
         }}
@@ -49,7 +49,7 @@ export default function HomeScreen() {
       <Text
         style={{
           fontFamily: fontFamily.displayItalic,
-          fontSize: fontSize.heading1,
+          fontSize: fontSize.display,
           lineHeight: 44,
           color: colors.textPrimary,
           marginTop: spacing['2xl'],
@@ -97,8 +97,8 @@ export default function HomeScreen() {
         <>
           <Text
             style={{
-              fontFamily: fontFamily.bodySemiBold,
-              fontSize: fontSize.heading2,
+              fontFamily: fontFamily.body,
+              fontSize: fontSize.body,
               color: colors.textPrimary,
               marginTop: spacing['4xl'],
               marginBottom: spacing.sm,
