@@ -1,0 +1,19 @@
+{
+  "common": {
+    "appName": "Dune"
+  },
+  "tabs": {
+    "home": "Inicio",
+    "stats": "Estadísticas",
+    "settings": "Ajustes"
+  },
+  "home": {
+    "placeholder": "Inicio"
+  },
+  "stats": {
+    "placeholder": "Estadísticas"
+  },
+  "settings": {
+    "placeholder": "Ajustes"
+  }
+}

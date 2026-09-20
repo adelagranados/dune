@@ -1,9 +1,17 @@
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { useTheme } from '@/ui/theme/ThemeProvider';
+
 export default function HomeScreen() {
+  const { t } = useTranslation();
+  const { colors, fontFamily, fontSize } = useTheme();
+
   return (
-    <View style={styles.container}>
-      <Text>Home</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={{ fontFamily: fontFamily.display, fontSize: fontSize.heading1, color: colors.textPrimary }}>
+        {t('home.placeholder')}
+      </Text>
     </View>
   );
 }
