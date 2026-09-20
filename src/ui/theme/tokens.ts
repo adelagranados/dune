@@ -21,6 +21,7 @@ export const fontSize = {
   label: 11,
   secondary: 13,
   body: 15,
+  heading3: 20,
   heading2: 24,
   heading1: 39,
 } as const;
@@ -28,6 +29,8 @@ export const fontSize = {
 export const fontFamily = {
   display: 'DMSerifDisplay_400Regular',
   displayItalic: 'DMSerifDisplay_400Regular_Italic',
+  // The brand wordmark is the one place that uses Playfair Display.
+  wordmark: 'PlayfairDisplay_400Regular',
   body: 'Manrope_400Regular',
   bodyMedium: 'Manrope_500Medium',
   bodySemiBold: 'Manrope_600SemiBold',
@@ -42,6 +45,8 @@ export type ColorTokens = {
   textSecondary: string;
   divider: string;
   primary: string;
+  /** Text/icons rendered on top of `primary` — not simply white. */
+  onPrimary: string;
 };
 
 export const lightColors: ColorTokens = {
@@ -55,6 +60,7 @@ export const lightColors: ColorTokens = {
   textSecondary: '#6D625B',
   divider: '#E9E3DC',
   primary: '#C86F52',
+  onPrimary: '#FAF4EC',
 };
 
 export const darkColors: ColorTokens = {
@@ -65,4 +71,5 @@ export const darkColors: ColorTokens = {
   textSecondary: '#B9ADA5',
   divider: '#453B36',
   primary: '#D98568',
+  onPrimary: '#1E1A18',
 };

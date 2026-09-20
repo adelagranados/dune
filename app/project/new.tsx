@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { createProject, getDistinctCategories } from '@/data/repositories/projectRepository';
 import { Button } from '@/ui/components/Button';
@@ -15,6 +16,7 @@ const DEFAULT_CATEGORY_SUGGESTIONS = ['Coding', 'Creative', 'Learning'];
 export default function CreateProjectScreen() {
   const { t } = useTranslation();
   const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const insets = useSafeAreaInsets();
   const router = useRouter();
 
   const [name, setName] = useState('');
@@ -50,7 +52,11 @@ export default function CreateProjectScreen() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: spacing.xl, paddingTop: spacing['3xl'] }}
+      contentContainerStyle={{
+        paddingHorizontal: spacing.xl,
+        paddingTop: insets.top + spacing.lg,
+        paddingBottom: insets.bottom + spacing['3xl'],
+      }}
     >
       <Pressable onPress={() => router.back()}>
         <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.primary }}>
@@ -165,7 +171,7 @@ export default function CreateProjectScreen() {
       </Text>
 
       <Button
-        label={t('common.continue')}
+        label={t('createProject.submit')}
         onPress={handleSubmit}
         disabled={!canSubmit}
         style={{ marginTop: spacing['2xl'] }}

@@ -17,7 +17,7 @@ export function Button({ label, onPress, variant = 'primary', disabled = false, 
 
   const isPrimary = variant === 'primary';
   const backgroundColor = disabled ? colors.divider : isPrimary ? colors.primary : colors.surface;
-  const textColor = isPrimary && !disabled ? '#FFFFFF' : colors.textPrimary;
+  const textColor = isPrimary && !disabled ? colors.onPrimary : colors.textPrimary;
 
   return (
     <Pressable
@@ -26,14 +26,14 @@ export function Button({ label, onPress, variant = 'primary', disabled = false, 
       style={[
         {
           backgroundColor,
-          borderRadius: radius.full,
+          borderRadius: radius.md,
           paddingVertical: spacing.lg,
           alignItems: 'center',
         },
         style,
       ]}
     >
-      <Text style={{ fontFamily: fontFamily.bodySemiBold, fontSize: fontSize.body, color: textColor }}>{label}</Text>
+      <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: textColor }}>{label}</Text>
     </Pressable>
   );
 }

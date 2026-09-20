@@ -27,7 +27,7 @@ export function Chip({ label, selected, onPress }: ChipProps) {
         style={{
           fontFamily: fontFamily.bodyMedium,
           fontSize: fontSize.body,
-          color: selected ? '#FFFFFF' : colors.textPrimary,
+          color: selected ? colors.onPrimary : colors.textPrimary,
         }}
       >
         {label}

@@ -1,7 +1,6 @@
 {
   "common": {
-    "appName": "Dune",
-    "continue": "Continue"
+    "appName": "Dune"
   },
   "tabs": {
     "home": "Home",
@@ -9,11 +8,12 @@
     "settings": "Settings"
   },
   "home": {
-    "headline": "See where your time went.",
+    "headline": "See where\nyour time went.",
     "emptyTitle": "No projects yet",
     "emptyDescription": "Create your first project and start seeing how your time adds up.",
     "newProject": "+ New project",
-    "projectsLabel": "Projects"
+    "projectsLabel": "Projects",
+    "createFirstProject": "Create a project"
   },
   "createProject": {
     "title": "New project",
@@ -24,7 +24,8 @@
     "colorLabel": "Color",
     "estimatedLabel": "Estimated time · optional",
     "estimatedPlaceholder": "Optional",
-    "estimatedHint": "You can always add or change this later."
+    "estimatedHint": "You can always add or change this later.",
+    "submit": "Create project"
   },
   "stats": {
     "placeholder": "Stats"

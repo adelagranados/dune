@@ -1,7 +1,6 @@
 {
   "common": {
-    "appName": "Dune",
-    "continue": "Continuar"
+    "appName": "Dune"
   },
   "tabs": {
     "home": "Inicio",
@@ -9,11 +8,12 @@
     "settings": "Ajustes"
   },
   "home": {
-    "headline": "Descubre cuánto tiempo tomó.",
+    "headline": "Descubre cuánto\ntiempo tomó.",
     "emptyTitle": "Aún no hay proyectos",
     "emptyDescription": "Crea tu primer proyecto y empieza a ver cómo se acumula tu tiempo.",
     "newProject": "+ Nuevo proyecto",
-    "projectsLabel": "Proyectos"
+    "projectsLabel": "Proyectos",
+    "createFirstProject": "Crear un proyecto"
   },
   "createProject": {
     "title": "Nuevo proyecto",
@@ -24,7 +24,8 @@
     "colorLabel": "Color",
     "estimatedLabel": "Tiempo estimado · opcional",
     "estimatedPlaceholder": "Opcional",
-    "estimatedHint": "Siempre puedes agregarlo o cambiarlo después."
+    "estimatedHint": "Siempre puedes agregarlo o cambiarlo después.",
+    "submit": "Crear proyecto"
   },
   "stats": {
     "placeholder": "Stats"

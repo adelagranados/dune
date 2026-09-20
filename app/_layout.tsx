@@ -10,6 +10,7 @@ import {
   Manrope_700Bold,
   useFonts as useBodyFonts,
 } from '@expo-google-fonts/manrope';
+import { PlayfairDisplay_400Regular, useFonts as useWordmarkFont } from '@expo-google-fonts/playfair-display';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -66,11 +67,12 @@ export default function RootLayout() {
     Manrope_600SemiBold,
     Manrope_700Bold,
   });
+  const [wordmarkFontLoaded] = useWordmarkFont({ PlayfairDisplay_400Regular });
   useEffect(() => {
     initI18n(language);
   }, [language]);
 
-  const ready = displayFontsLoaded && bodyFontsLoaded;
+  const ready = displayFontsLoaded && bodyFontsLoaded && wordmarkFontLoaded;
 
   useEffect(() => {
     if (ready) {
