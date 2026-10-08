@@ -36,7 +36,39 @@
     "roughEstimate": "estimado {{estimate}}",
     "yourSessions": "Tus sesiones",
     "sessionsEmpty": "Tus sesiones registradas aparecerán aquí.",
-    "startTimer": "Iniciar timer"
+    "startTimer": "Iniciar timer",
+    "openTimer": "Ver timer en curso",
+    "today": "Hoy",
+    "yesterday": "Ayer"
+  },
+  "sessionLength": {
+    "title": "Define tu meta de tiempo",
+    "subtitle": "¿Cuánto tiempo quieres trabajar?",
+    "label": "Duración de la sesión",
+    "options": {
+      "noLimit": "Sin límite",
+      "fifteen": "15 min",
+      "thirty": "30 min",
+      "fortyFive": "45 min",
+      "oneHour": "1 hora",
+      "custom": "Personalizado"
+    },
+    "customPlaceholder": "25",
+    "minutesSuffix": "min",
+    "reminderTitle": "Te avisamos cuando se cumpla el tiempo.",
+    "reminderHint": "Puedes seguir si quieres.",
+    "cancel": "Cancelar",
+    "start": "Iniciar timer"
+  },
+  "activeTimer": {
+    "noTimer": "No hay ningún timer en curso.",
+    "sessionNumber": "Sesión {{number}}",
+    "running": "El tiempo fluye",
+    "paused": "En pausa",
+    "startedAt": "Comenzó a las {{time}}",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "finish": "Terminar"
   },
   "stats": {
     "placeholder": "Stats"

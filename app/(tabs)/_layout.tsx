@@ -47,6 +47,8 @@ export default function TabsLayout() {
           ),
         }}
       />
+      {/* The timer keeps the bottom nav visible but is never a tab of its own. */}
+      <Tabs.Screen name="timer" options={{ href: null }} />
     </Tabs>
   );
 }

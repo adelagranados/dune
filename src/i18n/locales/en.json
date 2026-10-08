@@ -36,7 +36,39 @@
     "roughEstimate": "rough estimate {{estimate}}",
     "yourSessions": "Your sessions",
     "sessionsEmpty": "Your tracked sessions will show up here.",
-    "startTimer": "Start timer"
+    "startTimer": "Start timer",
+    "openTimer": "Open running timer",
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "sessionLength": {
+    "title": "Set a time goal",
+    "subtitle": "How long would you like to work?",
+    "label": "Session length",
+    "options": {
+      "noLimit": "No limit",
+      "fifteen": "15 min",
+      "thirty": "30 min",
+      "fortyFive": "45 min",
+      "oneHour": "1 hour",
+      "custom": "Custom"
+    },
+    "customPlaceholder": "25",
+    "minutesSuffix": "min",
+    "reminderTitle": "We'll let you know when time's up.",
+    "reminderHint": "You can keep going if you'd like.",
+    "cancel": "Cancel",
+    "start": "Start timer"
+  },
+  "activeTimer": {
+    "noTimer": "No timer is running right now.",
+    "sessionNumber": "Session {{number}}",
+    "running": "Time is flowing",
+    "paused": "Paused",
+    "startedAt": "Started at {{time}}",
+    "pause": "Pause",
+    "resume": "Resume",
+    "finish": "Finish"
   },
   "stats": {
     "placeholder": "Stats"
