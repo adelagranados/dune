@@ -41,7 +41,9 @@ export default function SessionLengthScreen() {
     if (remembered === null) {
       return 'noLimit';
     }
-    return DURATION_OPTIONS.find((option) => option.targetDurationMs === remembered)?.key ?? CUSTOM_KEY;
+    return (
+      DURATION_OPTIONS.find((option) => option.targetDurationMs === remembered)?.key ?? CUSTOM_KEY
+    );
   });
   const [customMinutes, setCustomMinutes] = useState(() => {
     const remembered = readLastTargetDurationMs();
@@ -55,7 +57,9 @@ export default function SessionLengthScreen() {
 
   const parsedCustomMinutes = Number.parseInt(customMinutes, 10);
   const customDurationMs =
-    Number.isFinite(parsedCustomMinutes) && parsedCustomMinutes > 0 ? parsedCustomMinutes * MINUTE_MS : null;
+    Number.isFinite(parsedCustomMinutes) && parsedCustomMinutes > 0
+      ? parsedCustomMinutes * MINUTE_MS
+      : null;
   const isCustom = selectedKey === CUSTOM_KEY;
   const canStart = !isCustom || customDurationMs !== null;
 
@@ -91,7 +95,13 @@ export default function SessionLengthScreen() {
       }}
     >
       <View style={{ paddingHorizontal: spacing.xl }}>
-        <Text style={{ fontFamily: fontFamily.bodyMedium, fontSize: fontSize.secondary, color: colors.textSecondary }}>
+        <Text
+          style={{
+            fontFamily: fontFamily.bodyMedium,
+            fontSize: fontSize.secondary,
+            color: colors.textSecondary,
+          }}
+        >
           {project?.name ?? ''}
         </Text>
         <Text
@@ -138,7 +148,9 @@ export default function SessionLengthScreen() {
           {t('sessionLength.label')}
         </Text>
 
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg, marginTop: spacing.lg }}>
+        <View
+          style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg, marginTop: spacing.lg }}
+        >
           {DURATION_OPTIONS.map((option) => (
             <Pressable
               key={option.key}
@@ -196,7 +208,13 @@ export default function SessionLengthScreen() {
                 color: colors.textPrimary,
               }}
             />
-            <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.textSecondary }}>
+            <Text
+              style={{
+                fontFamily: fontFamily.body,
+                fontSize: fontSize.body,
+                color: colors.textSecondary,
+              }}
+            >
               {t('sessionLength.minutesSuffix')}
             </Text>
           </View>
@@ -235,7 +253,11 @@ export default function SessionLengthScreen() {
             }}
           >
             <Text
-              style={{ fontFamily: fontFamily.bodySemiBold, fontSize: fontSize.secondary, color: colors.textPrimary }}
+              style={{
+                fontFamily: fontFamily.bodySemiBold,
+                fontSize: fontSize.secondary,
+                color: colors.textPrimary,
+              }}
             >
               {t('sessionLength.cancel')}
             </Text>

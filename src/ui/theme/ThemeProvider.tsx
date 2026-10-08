@@ -3,7 +3,15 @@ import { useColorScheme } from 'react-native';
 
 import { useSettingsStore } from '@/state/useSettingsStore';
 
-import { darkColors, fontFamily, fontSize, lightColors, radius, spacing, type ColorTokens } from './tokens';
+import {
+  darkColors,
+  fontFamily,
+  fontSize,
+  lightColors,
+  radius,
+  spacing,
+  type ColorTokens,
+} from './tokens';
 
 type Theme = {
   colorScheme: 'light' | 'dark';

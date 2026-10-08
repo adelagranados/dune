@@ -9,7 +9,13 @@ export default function SettingsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={{ fontFamily: fontFamily.display, fontSize: fontSize.heading1, color: colors.textPrimary }}>
+      <Text
+        style={{
+          fontFamily: fontFamily.display,
+          fontSize: fontSize.heading1,
+          color: colors.textPrimary,
+        }}
+      >
         {t('settings.placeholder')}
       </Text>
     </View>

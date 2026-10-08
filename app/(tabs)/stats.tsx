@@ -9,7 +9,13 @@ export default function StatsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={{ fontFamily: fontFamily.display, fontSize: fontSize.heading1, color: colors.textPrimary }}>
+      <Text
+        style={{
+          fontFamily: fontFamily.display,
+          fontSize: fontSize.heading1,
+          color: colors.textPrimary,
+        }}
+      >
         {t('stats.placeholder')}
       </Text>
     </View>

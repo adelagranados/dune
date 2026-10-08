@@ -26,7 +26,11 @@ export type FinishedSession = {
   durationMs: number;
 };
 
-export function startSession(projectId: string, targetDurationMs: number | null, now: number): ActiveTimer {
+export function startSession(
+  projectId: string,
+  targetDurationMs: number | null,
+  now: number,
+): ActiveTimer {
   return {
     projectId,
     startedAt: now,

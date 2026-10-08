@@ -10,7 +10,10 @@ import {
   Manrope_700Bold,
   useFonts as useBodyFonts,
 } from '@expo-google-fonts/manrope';
-import { PlayfairDisplay_400Regular, useFonts as useWordmarkFont } from '@expo-google-fonts/playfair-display';
+import {
+  PlayfairDisplay_400Regular,
+  useFonts as useWordmarkFont,
+} from '@expo-google-fonts/playfair-display';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -33,7 +36,9 @@ function RootNavigator() {
   if (error) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <Text style={{ color: colors.textPrimary }}>Database migration failed: {error.message}</Text>
+        <Text style={{ color: colors.textPrimary }}>
+          Database migration failed: {error.message}
+        </Text>
       </View>
     );
   }

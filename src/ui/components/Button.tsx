@@ -12,7 +12,13 @@ type ButtonProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-export function Button({ label, onPress, variant = 'primary', disabled = false, style }: ButtonProps) {
+export function Button({
+  label,
+  onPress,
+  variant = 'primary',
+  disabled = false,
+  style,
+}: ButtonProps) {
   const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
 
   const isPrimary = variant === 'primary';
@@ -33,7 +39,9 @@ export function Button({ label, onPress, variant = 'primary', disabled = false, 
         style,
       ]}
     >
-      <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.button, color: textColor }}>{label}</Text>
+      <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.button, color: textColor }}>
+        {label}
+      </Text>
     </Pressable>
   );
 }

@@ -82,10 +82,22 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
       <Hourglass color={colors.primary} width={24} />
 
       <View style={{ flex: 1 }}>
-        <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.secondary, color: colors.textPrimary }}>
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.secondary,
+            color: colors.textPrimary,
+          }}
+        >
           {project && project.id === projectId ? project.name : ''}
         </Text>
-        <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.textPrimary }}>
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.body,
+            color: colors.textPrimary,
+          }}
+        >
           {formatTimerClock(computeActiveElapsedMs(timer, now))}
         </Text>
       </View>
@@ -99,7 +111,13 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
           paddingVertical: spacing.sm,
         }}
       >
-        <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.secondary, color: colors.primary }}>
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.secondary,
+            color: colors.primary,
+          }}
+        >
           {isRunning ? t('activeTimer.pause') : t('activeTimer.resume')}
         </Text>
       </Pressable>

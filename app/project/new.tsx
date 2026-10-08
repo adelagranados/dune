@@ -23,7 +23,9 @@ export default function CreateProjectScreen() {
   const [category, setCategory] = useState<string | null>(null);
   const [color, setColor] = useState(PROJECT_COLORS[0]);
   const [estimatedHours, setEstimatedHours] = useState('');
-  const [categorySuggestions, setCategorySuggestions] = useState<string[]>(DEFAULT_CATEGORY_SUGGESTIONS);
+  const [categorySuggestions, setCategorySuggestions] = useState<string[]>(
+    DEFAULT_CATEGORY_SUGGESTIONS,
+  );
 
   useEffect(() => {
     getDistinctCategories().then((existing) => {
@@ -44,7 +46,8 @@ export default function CreateProjectScreen() {
       name: name.trim(),
       category,
       color,
-      estimatedTimeMs: Number.isFinite(hours) && hours > 0 ? Math.round(hours * 60 * 60 * 1000) : null,
+      estimatedTimeMs:
+        Number.isFinite(hours) && hours > 0 ? Math.round(hours * 60 * 60 * 1000) : null,
     });
     router.back();
   };
@@ -59,7 +62,9 @@ export default function CreateProjectScreen() {
       }}
     >
       <Pressable onPress={() => router.back()}>
-        <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.primary }}>
+        <Text
+          style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.primary }}
+        >
           {'‹ ' + t('tabs.home')}
         </Text>
       </Pressable>

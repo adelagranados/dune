@@ -4,7 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { listProjectsWithTotals, type ProjectWithTotal } from '@/data/repositories/projectRepository';
+import {
+  listProjectsWithTotals,
+  type ProjectWithTotal,
+} from '@/data/repositories/projectRepository';
 import { formatDuration } from '@/lib/time';
 import { Button } from '@/ui/components/Button';
 import { Hourglass } from '@/ui/icons';
@@ -109,20 +112,45 @@ export default function HomeScreen() {
           <FlatList
             data={projects}
             keyExtractor={(item) => item.project.id}
-            ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: colors.divider }} />}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: 1, backgroundColor: colors.divider }} />
+            )}
             ListFooterComponent={
-              <Pressable onPress={() => router.push('/project/new')} style={{ marginTop: spacing['2xl'] }}>
-                <Text style={{ fontFamily: fontFamily.bodyMedium, fontSize: fontSize.body, color: colors.primary }}>
+              <Pressable
+                onPress={() => router.push('/project/new')}
+                style={{ marginTop: spacing['2xl'] }}
+              >
+                <Text
+                  style={{
+                    fontFamily: fontFamily.bodyMedium,
+                    fontSize: fontSize.body,
+                    color: colors.primary,
+                  }}
+                >
                   {t('home.newProject')}
                 </Text>
               </Pressable>
             }
             renderItem={({ item }) => (
               <Pressable
-                onPress={() => router.push({ pathname: '/project/[id]', params: { id: item.project.id } })}
-                style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.md, gap: spacing.md }}
+                onPress={() =>
+                  router.push({ pathname: '/project/[id]', params: { id: item.project.id } })
+                }
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: spacing.md,
+                  gap: spacing.md,
+                }}
               >
-                <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: item.project.color }} />
+                <View
+                  style={{
+                    width: 9,
+                    height: 9,
+                    borderRadius: 5,
+                    backgroundColor: item.project.color,
+                  }}
+                />
                 <Text
                   style={{
                     flex: 1,

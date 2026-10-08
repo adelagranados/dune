@@ -62,8 +62,21 @@ export default function ActiveTimerScreen() {
 
   if (!timer) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.background, padding: spacing.xl, paddingTop: insets.top + spacing.lg }}>
-        <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.textSecondary }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.background,
+          padding: spacing.xl,
+          paddingTop: insets.top + spacing.lg,
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.body,
+            color: colors.textSecondary,
+          }}
+        >
           {t('activeTimer.noTimer')}
         </Text>
       </View>
@@ -95,11 +108,23 @@ export default function ActiveTimerScreen() {
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.textPrimary }}>
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.body,
+            color: colors.textPrimary,
+          }}
+        >
           {project?.name ?? ''}
         </Text>
         {sessionNumber !== null ? (
-          <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.label, color: colors.textSecondary }}>
+          <Text
+            style={{
+              fontFamily: fontFamily.body,
+              fontSize: fontSize.label,
+              color: colors.textSecondary,
+            }}
+          >
             {t('activeTimer.sessionNumber', { number: sessionNumber })}
           </Text>
         ) : null}
@@ -147,7 +172,14 @@ export default function ActiveTimerScreen() {
         </Text>
       </View>
 
-      <View style={{ flexDirection: 'row', gap: spacing.lg, marginTop: 'auto', marginBottom: spacing['2xl'] }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          gap: spacing.lg,
+          marginTop: 'auto',
+          marginBottom: spacing['2xl'],
+        }}
+      >
         <Pressable
           onPress={isRunning ? pause : resume}
           style={{
@@ -166,7 +198,13 @@ export default function ActiveTimerScreen() {
           ) : (
             <PlayIcon color={colors.textPrimary} size={18} weight="regular" />
           )}
-          <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.button, color: colors.textPrimary }}>
+          <Text
+            style={{
+              fontFamily: fontFamily.body,
+              fontSize: fontSize.button,
+              color: colors.textPrimary,
+            }}
+          >
             {isRunning ? t('activeTimer.pause') : t('activeTimer.resume')}
           </Text>
         </Pressable>
@@ -185,7 +223,13 @@ export default function ActiveTimerScreen() {
           }}
         >
           <CheckIcon color={colors.onPrimary} size={18} weight="regular" />
-          <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.button, color: colors.onPrimary }}>
+          <Text
+            style={{
+              fontFamily: fontFamily.body,
+              fontSize: fontSize.button,
+              color: colors.onPrimary,
+            }}
+          >
             {t('activeTimer.finish')}
           </Text>
         </Pressable>

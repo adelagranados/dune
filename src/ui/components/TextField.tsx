@@ -11,7 +11,14 @@ type TextFieldProps = {
   suffix?: string;
 };
 
-export function TextField({ label, value, onChangeText, placeholder, keyboardType, suffix }: TextFieldProps) {
+export function TextField({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  keyboardType,
+  suffix,
+}: TextFieldProps) {
   const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
 
   return (
@@ -54,7 +61,13 @@ export function TextField({ label, value, onChangeText, placeholder, keyboardTyp
           }}
         />
         {suffix ? (
-          <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.textSecondary }}>
+          <Text
+            style={{
+              fontFamily: fontFamily.body,
+              fontSize: fontSize.body,
+              color: colors.textSecondary,
+            }}
+          >
             {suffix}
           </Text>
         ) : null}

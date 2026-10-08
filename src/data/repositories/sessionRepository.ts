@@ -20,10 +20,17 @@ export async function createSession(input: CreateSessionInput): Promise<Session>
 }
 
 export async function listSessionsByProject(projectId: string): Promise<Session[]> {
-  return db.select().from(sessions).where(eq(sessions.projectId, projectId)).orderBy(desc(sessions.startedAt));
+  return db
+    .select()
+    .from(sessions)
+    .where(eq(sessions.projectId, projectId))
+    .orderBy(desc(sessions.startedAt));
 }
 
 export async function countSessionsByProject(projectId: string): Promise<number> {
-  const rows = await db.select({ id: sessions.id }).from(sessions).where(eq(sessions.projectId, projectId));
+  const rows = await db
+    .select({ id: sessions.id })
+    .from(sessions)
+    .where(eq(sessions.projectId, projectId));
   return rows.length;
 }

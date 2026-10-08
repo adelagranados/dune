@@ -46,7 +46,9 @@ export default function ProjectDetailScreen() {
   }
 
   const totalDurationMs = sessions.reduce((total, session) => total + session.durationMs, 0);
-  const estimateProgress = project.estimatedTimeMs ? Math.min(totalDurationMs / project.estimatedTimeMs, 1) : null;
+  const estimateProgress = project.estimatedTimeMs
+    ? Math.min(totalDurationMs / project.estimatedTimeMs, 1)
+    : null;
 
   const formatSessionDay = (startedAt: number) => {
     if (isSameDay(startedAt, loadedAt)) {
@@ -57,7 +59,10 @@ export default function ProjectDetailScreen() {
     if (isSameDay(startedAt, yesterday.getTime())) {
       return t('projectDetail.yesterday');
     }
-    return new Date(startedAt).toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' });
+    return new Date(startedAt).toLocaleDateString(i18n.language, {
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   return (
@@ -70,7 +75,13 @@ export default function ProjectDetailScreen() {
       }}
     >
       <Pressable onPress={() => router.back()}>
-        <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.secondary, color: colors.primary }}>
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.secondary,
+            color: colors.primary,
+          }}
+        >
           {'‹ ' + t('projectDetail.back')}
         </Text>
       </Pressable>
@@ -128,15 +139,31 @@ export default function ProjectDetailScreen() {
           {formatDuration(totalDurationMs)}
         </Text>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm }}>
-          <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.label, color: colors.textSecondary }}>
+        <View
+          style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm }}
+        >
+          <Text
+            style={{
+              fontFamily: fontFamily.body,
+              fontSize: fontSize.label,
+              color: colors.textSecondary,
+            }}
+          >
             {sessions.length === 0
               ? t('projectDetail.noSessionsYet')
               : t('projectDetail.sessionCount', { count: sessions.length })}
           </Text>
           {project.estimatedTimeMs ? (
-            <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.label, color: colors.textSecondary }}>
-              {t('projectDetail.roughEstimate', { estimate: formatDuration(project.estimatedTimeMs) })}
+            <Text
+              style={{
+                fontFamily: fontFamily.body,
+                fontSize: fontSize.label,
+                color: colors.textSecondary,
+              }}
+            >
+              {t('projectDetail.roughEstimate', {
+                estimate: formatDuration(project.estimatedTimeMs),
+              })}
             </Text>
           ) : null}
         </View>
@@ -193,13 +220,25 @@ export default function ProjectDetailScreen() {
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-                <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: project.color }} />
-                <Text style={{ fontFamily: fontFamily.body, fontSize: fontSize.secondary, color: colors.textPrimary }}>
+                <View
+                  style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: project.color }}
+                />
+                <Text
+                  style={{
+                    fontFamily: fontFamily.body,
+                    fontSize: fontSize.secondary,
+                    color: colors.textPrimary,
+                  }}
+                >
                   {formatSessionDay(session.startedAt)}
                 </Text>
               </View>
               <Text
-                style={{ fontFamily: fontFamily.bodySemiBold, fontSize: fontSize.body, color: colors.textPrimary }}
+                style={{
+                  fontFamily: fontFamily.bodySemiBold,
+                  fontSize: fontSize.body,
+                  color: colors.textPrimary,
+                }}
               >
                 {formatDuration(session.durationMs)}
               </Text>
