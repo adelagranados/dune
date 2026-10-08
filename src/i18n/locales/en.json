@@ -60,6 +60,26 @@
     "cancel": "Cancel",
     "start": "Start timer"
   },
+  "sessionSaved": {
+    "label": "Session saved",
+    "added": "added.",
+    "total": "{{total}} total",
+    "microcopy": "Every minute adds up.",
+    "done": "Done",
+    "addManualEntry": "Add manual entry"
+  },
+  "manualEntry": {
+    "title": "Manual entry",
+    "subtitle": "Add time you tracked outside Dune.",
+    "project": "Project",
+    "date": "Date",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "duration": "Duration",
+    "hint": "Dune will add this time to your project total.",
+    "invalidRange": "The end time needs to be after the start time.",
+    "submit": "Add time"
+  },
   "activeTimer": {
     "noTimer": "No timer is running right now.",
     "sessionNumber": "Session {{number}}",

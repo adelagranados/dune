@@ -1,4 +1,6 @@
 export {
+  CaretDownIcon,
+  CaretRightIcon,
   ChartBarIcon as StatsIcon,
   CheckIcon,
   GearIcon as SettingsIcon,

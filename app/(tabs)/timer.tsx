@@ -95,7 +95,10 @@ export default function ActiveTimerScreen() {
       return;
     }
     await createSession({ ...finished, source: 'timer' });
-    router.replace({ pathname: '/project/[id]', params: { id: finished.projectId } });
+    router.replace({
+      pathname: '/session-saved',
+      params: { projectId: finished.projectId, durationMs: String(finished.durationMs) },
+    });
   };
 
   return (
