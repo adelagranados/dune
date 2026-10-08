@@ -6,6 +6,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { readLastTargetDurationMs, writeLastTargetDurationMs } from '@/data/kv/activeTimer.store';
 import type { Project } from '@/data/db/schema';
+import {
+  ensureNotificationPermission,
+  isNotificationPermissionBlocked,
+} from '@/data/notifications/targetNotifications';
 import { getProjectById } from '@/data/repositories/projectRepository';
 import { useActiveTimerStore } from '@/state/useActiveTimerStore';
 import { useTheme } from '@/ui/theme/ThemeProvider';
@@ -51,9 +55,15 @@ export default function SessionLengthScreen() {
     return remembered !== null && !isPreset ? String(remembered / MINUTE_MS) : '';
   });
 
+  const [notificationsBlocked, setNotificationsBlocked] = useState(false);
+
   useEffect(() => {
     getProjectById(projectId).then(setProject);
   }, [projectId]);
+
+  useEffect(() => {
+    isNotificationPermissionBlocked().then(setNotificationsBlocked);
+  }, []);
 
   const parsedCustomMinutes = Number.parseInt(customMinutes, 10);
   const customDurationMs =
@@ -62,17 +72,28 @@ export default function SessionLengthScreen() {
       : null;
   const isCustom = selectedKey === CUSTOM_KEY;
   const canStart = !isCustom || customDurationMs !== null;
+  const targetDurationMs = isCustom
+    ? customDurationMs
+    : (DURATION_OPTIONS.find((option) => option.key === selectedKey)?.targetDurationMs ?? null);
 
-  const handleStart = () => {
+  // The card only promises a reminder when there is actually one to deliver:
+  // "No limit" has nothing to announce, and a permanently denied permission
+  // means we cannot announce it even when there is.
+  const reminderKey =
+    targetDurationMs === null ? 'noTarget' : notificationsBlocked ? 'blocked' : 'scheduled';
+
+  const handleStart = async () => {
     if (!canStart) {
       return;
     }
-    const target = isCustom
-      ? customDurationMs
-      : (DURATION_OPTIONS.find((option) => option.key === selectedKey)?.targetDurationMs ?? null);
+    if (targetDurationMs !== null) {
+      // Asked here rather than on launch: this is the first moment the request
+      // has a reason the user can recognize.
+      await ensureNotificationPermission();
+    }
 
-    writeLastTargetDurationMs(target);
-    start(projectId, target);
+    writeLastTargetDurationMs(targetDurationMs);
+    start(projectId, targetDurationMs);
     router.replace('/timer');
   };
 
@@ -228,7 +249,7 @@ export default function SessionLengthScreen() {
             marginTop: spacing['2xl'],
           }}
         >
-          {t('sessionLength.reminderTitle')}
+          {t(`sessionLength.reminder.${reminderKey}.title`)}
         </Text>
         <Text
           style={{
@@ -238,7 +259,7 @@ export default function SessionLengthScreen() {
             marginTop: spacing.xs,
           }}
         >
-          {t('sessionLength.reminderHint')}
+          {t(`sessionLength.reminder.${reminderKey}.hint`)}
         </Text>
 
         <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: 'auto' }}>

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   computeActiveElapsedMs,
   computeRemainingTargetMs,
+  computeTargetFireAt,
   finishSession,
   isTargetReached,
   pauseSession,
@@ -130,5 +131,49 @@ describe('finishSession', () => {
     const finished = finishSession(paused, T0 + minutes(50));
 
     expect(finished.durationMs).toBe(minutes(8));
+  });
+});
+
+describe('computeTargetFireAt', () => {
+  it('aims at the full target when the session just started', () => {
+    const timer = startSession('project-1', minutes(45), T0);
+
+    expect(computeTargetFireAt(timer, T0)).toBe(T0 + minutes(45));
+  });
+
+  it('returns null without a target', () => {
+    const timer = startSession('project-1', null, T0);
+
+    expect(computeTargetFireAt(timer, T0 + minutes(5))).toBeNull();
+  });
+
+  it('returns null while paused, because a frozen clock has no fire time', () => {
+    const timer = pauseSession(startSession('project-1', minutes(45), T0), T0 + minutes(10));
+
+    expect(computeTargetFireAt(timer, T0 + minutes(30))).toBeNull();
+  });
+
+  it('pushes the fire time out by the full length of the pause', () => {
+    // 45min target, work 10, pause 20, resume: 35min of work are still owed, so
+    // the notification must land 35min after the resume - not 45min after start.
+    const started = startSession('project-1', minutes(45), T0);
+    const paused = pauseSession(started, T0 + minutes(10));
+    const resumedAt = T0 + minutes(30);
+    const resumed = resumeSession(paused, resumedAt);
+
+    expect(computeTargetFireAt(resumed, resumedAt)).toBe(resumedAt + minutes(35));
+    expect(computeTargetFireAt(resumed, resumedAt)).toBe(T0 + minutes(65));
+  });
+
+  it('returns null once the target is already behind us', () => {
+    const timer = startSession('project-1', minutes(15), T0);
+
+    expect(computeTargetFireAt(timer, T0 + minutes(20))).toBeNull();
+  });
+
+  it('schedules from the remaining time when rescheduled mid-session', () => {
+    const timer = startSession('project-1', minutes(60), T0);
+
+    expect(computeTargetFireAt(timer, T0 + minutes(25))).toBe(T0 + minutes(60));
   });
 });

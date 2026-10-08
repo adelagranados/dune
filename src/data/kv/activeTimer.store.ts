@@ -6,6 +6,7 @@ const storage = createMMKV({ id: 'dune.timer' });
 
 const ACTIVE_TIMER_KEY = 'activeTimer';
 const LAST_TARGET_KEY = 'lastTargetDurationMs';
+const TARGET_NOTIFICATION_ID_KEY = 'targetNotificationId';
 
 export function readActiveTimer(): ActiveTimer | null {
   const raw = storage.getString(ACTIVE_TIMER_KEY);
@@ -31,4 +32,22 @@ export function readLastTargetDurationMs(): number | null {
 
 export function writeLastTargetDurationMs(targetDurationMs: number | null): void {
   storage.set(LAST_TARGET_KEY, targetDurationMs ?? 0);
+}
+
+/**
+ * Kept next to the timer but deliberately out of `ActiveTimer`: the id belongs
+ * to the OS scheduler, not to the session, and the domain type stays free of
+ * platform concerns. It survives a relaunch so a pending notification can still
+ * be cancelled after the process was killed.
+ */
+export function readTargetNotificationId(): string | null {
+  return storage.getString(TARGET_NOTIFICATION_ID_KEY) ?? null;
+}
+
+export function writeTargetNotificationId(id: string | null): void {
+  if (id === null) {
+    storage.remove(TARGET_NOTIFICATION_ID_KEY);
+    return;
+  }
+  storage.set(TARGET_NOTIFICATION_ID_KEY, id);
 }

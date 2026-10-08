@@ -38,6 +38,7 @@
     "sessionsEmpty": "Your tracked sessions will show up here.",
     "startTimer": "Start timer",
     "openTimer": "Open running timer",
+    "addManualEntry": "Add time manually",
     "today": "Today",
     "yesterday": "Yesterday"
   },
@@ -55,8 +56,20 @@
     },
     "customPlaceholder": "25",
     "minutesSuffix": "min",
-    "reminderTitle": "We'll let you know when time's up.",
-    "reminderHint": "You can keep going if you'd like.",
+    "reminder": {
+      "scheduled": {
+        "title": "We'll let you know when time's up.",
+        "hint": "You can keep going if you'd like."
+      },
+      "blocked": {
+        "title": "Notifications are off.",
+        "hint": "The timer still runs — Dune just can't tell you when you get there."
+      },
+      "noTarget": {
+        "title": "Nothing will interrupt you.",
+        "hint": "The timer runs until you stop it."
+      }
+    },
     "cancel": "Cancel",
     "start": "Start timer"
   },
@@ -79,6 +92,13 @@
     "hint": "Dune will add this time to your project total.",
     "invalidRange": "The end time needs to be after the start time.",
     "submit": "Add time"
+  },
+  "notifications": {
+    "channelName": "Session target",
+    "targetReached": {
+      "title": "Time's up",
+      "body": "You reached {{target}} on {{project}}. Keep going if you'd like."
+    }
   },
   "activeTimer": {
     "noTimer": "No timer is running right now.",

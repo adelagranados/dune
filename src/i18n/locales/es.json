@@ -38,6 +38,7 @@
     "sessionsEmpty": "Tus sesiones registradas aparecerán aquí.",
     "startTimer": "Iniciar timer",
     "openTimer": "Ver timer en curso",
+    "addManualEntry": "Agregar tiempo manual",
     "today": "Hoy",
     "yesterday": "Ayer"
   },
@@ -55,8 +56,20 @@
     },
     "customPlaceholder": "25",
     "minutesSuffix": "min",
-    "reminderTitle": "Te avisamos cuando se cumpla el tiempo.",
-    "reminderHint": "Puedes seguir si quieres.",
+    "reminder": {
+      "scheduled": {
+        "title": "Te avisamos cuando se cumpla el tiempo.",
+        "hint": "Puedes seguir si quieres."
+      },
+      "blocked": {
+        "title": "Las notificaciones están apagadas.",
+        "hint": "El timer corre igual, pero Dune no podrá avisarte."
+      },
+      "noTarget": {
+        "title": "Nada va a interrumpirte.",
+        "hint": "El timer corre hasta que tú lo detengas."
+      }
+    },
     "cancel": "Cancelar",
     "start": "Iniciar timer"
   },
@@ -79,6 +92,13 @@
     "hint": "Dune sumará este tiempo al total de tu proyecto.",
     "invalidRange": "La hora de fin tiene que ser posterior a la de inicio.",
     "submit": "Agregar tiempo"
+  },
+  "notifications": {
+    "channelName": "Meta de sesión",
+    "targetReached": {
+      "title": "Se cumplió el tiempo",
+      "body": "Llegaste a {{target}} en {{project}}. Puedes seguir si quieres."
+    }
   },
   "activeTimer": {
     "noTimer": "No hay ningún timer en curso.",

@@ -256,6 +256,14 @@ export default function ProjectDetailScreen() {
         }
         style={{ marginTop: spacing['4xl'] }}
       />
+      <Button
+        label={t('projectDetail.addManualEntry')}
+        variant="secondary"
+        onPress={() =>
+          router.push({ pathname: '/manual-entry', params: { projectId: project.id } })
+        }
+        style={{ marginTop: spacing.lg }}
+      />
     </ScrollView>
   );
 }

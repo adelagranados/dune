@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { clearActiveTimer, readActiveTimer, writeActiveTimer } from '@/data/kv/activeTimer.store';
+import { syncTargetNotification } from '@/data/notifications/targetNotifications';
 import {
   finishSession,
   pauseSession,
@@ -19,6 +20,17 @@ type ActiveTimerState = {
 };
 
 /**
+ * Rescheduling is intentionally not awaited: the transition is already
+ * persisted, and a slow or failing scheduler must never delay the UI or lose a
+ * session. The timer is the record; the notification is a courtesy.
+ */
+function syncNotification(timer: ActiveTimer | null, now: number): void {
+  syncTargetNotification(timer, now).catch(() => {
+    // Swallowed on purpose — see above.
+  });
+}
+
+/**
  * Orchestrates the pure timer engine with its persisted copy. The store is
  * seeded straight from storage, so a relaunch picks the session back up with
  * its original startedAt rather than restarting the clock.
@@ -27,9 +39,11 @@ export const useActiveTimerStore = create<ActiveTimerState>((set, get) => ({
   timer: readActiveTimer(),
 
   start: (projectId, targetDurationMs) => {
-    const timer = startSession(projectId, targetDurationMs, Date.now());
+    const now = Date.now();
+    const timer = startSession(projectId, targetDurationMs, now);
     writeActiveTimer(timer);
     set({ timer });
+    syncNotification(timer, now);
   },
 
   pause: () => {
@@ -37,9 +51,11 @@ export const useActiveTimerStore = create<ActiveTimerState>((set, get) => ({
     if (!current || current.pausedAt !== null) {
       return;
     }
-    const timer = pauseSession(current, Date.now());
+    const now = Date.now();
+    const timer = pauseSession(current, now);
     writeActiveTimer(timer);
     set({ timer });
+    syncNotification(timer, now);
   },
 
   resume: () => {
@@ -47,9 +63,11 @@ export const useActiveTimerStore = create<ActiveTimerState>((set, get) => ({
     if (!current || current.pausedAt === null) {
       return;
     }
-    const timer = resumeSession(current, Date.now());
+    const now = Date.now();
+    const timer = resumeSession(current, now);
     writeActiveTimer(timer);
     set({ timer });
+    syncNotification(timer, now);
   },
 
   finish: () => {
@@ -57,9 +75,11 @@ export const useActiveTimerStore = create<ActiveTimerState>((set, get) => ({
     if (!current) {
       return null;
     }
-    const session = finishSession(current, Date.now());
+    const now = Date.now();
+    const session = finishSession(current, now);
     clearActiveTimer();
     set({ timer: null });
+    syncNotification(null, now);
     return session;
   },
 }));

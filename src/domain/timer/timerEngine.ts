@@ -88,3 +88,24 @@ export function isTargetReached(timer: ActiveTimer, now: number): boolean {
   }
   return computeActiveElapsedMs(timer, now) >= timer.targetDurationMs;
 }
+
+/**
+ * Wall-clock timestamp at which the target would be reached if the timer keeps
+ * running from `now`.
+ *
+ * The target is measured in active work time, but a notification can only be
+ * scheduled against wall-clock time — the two only line up while the timer is
+ * running. That is why this returns null while paused: a frozen clock has no
+ * future moment to aim at, so the pending notification has to be dropped and a
+ * fresh one computed on resume.
+ */
+export function computeTargetFireAt(timer: ActiveTimer, now: number): number | null {
+  if (timer.pausedAt !== null) {
+    return null;
+  }
+  const remainingMs = computeRemainingTargetMs(timer, now);
+  if (remainingMs === null || remainingMs <= 0) {
+    return null;
+  }
+  return now + remainingMs;
+}

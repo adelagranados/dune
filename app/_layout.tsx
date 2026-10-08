@@ -23,6 +23,7 @@ import { Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { db, migrations } from '@/data/db/client';
+import { configureTargetNotifications } from '@/data/notifications/targetNotifications';
 import { initI18n } from '@/i18n';
 import { useSettingsStore } from '@/state/useSettingsStore';
 import { ThemeProvider, useTheme } from '@/ui/theme/ThemeProvider';
@@ -75,6 +76,9 @@ export default function RootLayout() {
   const [wordmarkFontLoaded] = useWordmarkFont({ PlayfairDisplay_400Regular });
   useEffect(() => {
     initI18n(language);
+    // After initI18n so the Android channel gets its localized name, and
+    // re-run on a language change so renaming it follows the app.
+    void configureTargetNotifications();
   }, [language]);
 
   const ready = displayFontsLoaded && bodyFontsLoaded && wordmarkFontLoaded;
