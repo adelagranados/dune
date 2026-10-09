@@ -25,7 +25,7 @@ function combine(day: Date, time: Date): number {
 export default function ManualEntryScreen() {
   const { projectId } = useLocalSearchParams<{ projectId: string }>();
   const { t, i18n } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, colorScheme, radius, spacing, fontFamily, fontSize } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -82,6 +82,16 @@ export default function ManualEntryScreen() {
       value={openPicker === 'date' ? day : openPicker === 'start' ? startTime : endTime}
       mode={openPicker === 'date' ? 'date' : 'time'}
       display={Platform.OS === 'ios' ? (openPicker === 'date' ? 'inline' : 'spinner') : 'default'}
+      // Without these the native picker draws itself in the iOS system blue,
+      // which is the one part of the sheet the app's own styles cannot reach.
+      // They are iOS-only props, so Android is left untouched.
+      {...(Platform.OS === 'ios'
+        ? {
+            accentColor: colors.primary,
+            textColor: colors.textPrimary,
+            themeVariant: colorScheme === 'dark' ? ('dark' as const) : ('light' as const),
+          }
+        : {})}
       onValueChange={(_event, selected) => {
         applySelection(selected);
         // On Android the component is the dialog, so picking closes it. On iOS
@@ -299,7 +309,9 @@ export default function ManualEntryScreen() {
                 </Text>
               </Pressable>
             </View>
-            {openPicker !== null ? renderPicker() : null}
+            <View style={{ alignItems: 'center', paddingHorizontal: spacing.lg }}>
+              {openPicker !== null ? renderPicker() : null}
+            </View>
           </View>
         </Modal>
       ) : openPicker !== null ? (
