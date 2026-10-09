@@ -20,12 +20,11 @@ export function SegmentedControl<T extends string>({
   onChange,
   style,
 }: SegmentedControlProps<T>) {
-  const { colors, colorScheme, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
 
-  // The selected segment sits one step lighter than the track it rides on. In
-  // light that lighter surface is the page background; in dark it is the
-  // elevated surface.
-  const selectedBackground = colorScheme === 'dark' ? colors.surfaceElevated : colors.background;
+  // The selected segment sits one step lighter than its track, which is what
+  // `surfaceElevated` means in both themes now that light has a real value for
+  // it. This used to branch on colorScheme because light reused `surface`.
 
   return (
     <View
@@ -53,7 +52,7 @@ export function SegmentedControl<T extends string>({
               justifyContent: 'center',
               paddingVertical: spacing.md,
               borderRadius: radius.lg,
-              backgroundColor: selected ? selectedBackground : 'transparent',
+              backgroundColor: selected ? colors.surfaceElevated : 'transparent',
             }}
           >
             <Text

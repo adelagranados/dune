@@ -29,7 +29,7 @@ export default function TabsLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: colors.primary,
+          tabBarActiveTintColor: colors.primaryText,
           tabBarInactiveTintColor: colors.textSecondary,
           tabBarIconStyle: { height: 22 },
           tabBarLabelStyle: { fontSize: fontSize.label, marginTop: 2 },
@@ -48,7 +48,7 @@ export default function TabsLayout() {
             title: t('tabs.home'),
             tabBarIcon: ({ focused, size }) => (
               <HomeIcon
-                color={focused ? colors.primary : colors.textSecondary}
+                color={focused ? colors.primaryText : colors.textSecondary}
                 size={size}
                 weight="regular"
               />
@@ -61,7 +61,7 @@ export default function TabsLayout() {
             title: t('tabs.stats'),
             tabBarIcon: ({ focused, size }) => (
               <StatsIcon
-                color={focused ? colors.primary : colors.textSecondary}
+                color={focused ? colors.primaryText : colors.textSecondary}
                 size={size}
                 weight="regular"
               />
@@ -74,7 +74,7 @@ export default function TabsLayout() {
             title: t('tabs.settings'),
             tabBarIcon: ({ focused, size }) => (
               <SettingsIcon
-                color={focused ? colors.primary : colors.textSecondary}
+                color={focused ? colors.primaryText : colors.textSecondary}
                 size={size}
                 weight="regular"
               />

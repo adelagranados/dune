@@ -304,7 +304,7 @@ export default function ManualEntryScreen() {
                   style={{
                     fontFamily: fontFamily.bodySemiBold,
                     fontSize: fontSize.button,
-                    color: colors.primary,
+                    color: colors.primaryText,
                   }}
                 >
                   {t('common.done')}

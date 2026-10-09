@@ -124,7 +124,7 @@ export default function HomeScreen() {
                   style={{
                     fontFamily: fontFamily.bodyMedium,
                     fontSize: fontSize.body,
-                    color: colors.primary,
+                    color: colors.primaryText,
                   }}
                 >
                   {t('home.newProject')}

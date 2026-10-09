@@ -115,7 +115,7 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
           style={{
             fontFamily: fontFamily.body,
             fontSize: fontSize.secondary,
-            color: colors.primary,
+            color: colors.primaryText,
           }}
         >
           {isRunning ? t('activeTimer.pause') : t('activeTimer.resume')}

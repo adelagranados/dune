@@ -106,7 +106,7 @@ export default function ProjectDetailScreen() {
           style={{
             fontFamily: fontFamily.body,
             fontSize: fontSize.secondary,
-            color: colors.primary,
+            color: colors.primaryText,
           }}
         >
           {'‹ ' + t('projectDetail.back')}

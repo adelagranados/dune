@@ -70,7 +70,11 @@ export default function CreateProjectScreen() {
     >
       <Pressable onPress={() => router.back()}>
         <Text
-          style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.primary }}
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.body,
+            color: colors.primaryText,
+          }}
         >
           {'‹ ' + t('tabs.home')}
         </Text>
