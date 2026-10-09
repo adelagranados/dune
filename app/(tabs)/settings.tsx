@@ -15,7 +15,7 @@ const LANGUAGE_OPTIONS: LanguagePreference[] = ['system', 'en', 'es'];
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
 
   const themePreference = useSettingsStore((state) => state.themePreference);
@@ -38,6 +38,7 @@ export default function SettingsScreen() {
         style={{
           fontFamily: fontFamily.display,
           fontSize: fontSize.heading1,
+          lineHeight: lineHeight.heading1,
           color: colors.textPrimary,
         }}
       >

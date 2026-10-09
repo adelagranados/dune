@@ -48,6 +48,12 @@ export type ColorTokens = {
   surfaceElevated: string;
   textPrimary: string;
   textSecondary: string;
+  /**
+   * Hint text inside an input. Deliberately dimmer than `textSecondary`: a
+   * placeholder drawn in the same colour as real content is indistinguishable
+   * from an entered value, which is a question of legibility rather than taste.
+   */
+  textPlaceholder: string;
   divider: string;
   primary: string;
   /** Text/icons rendered on top of `primary` — not simply white. */
@@ -63,6 +69,8 @@ export const lightColors: ColorTokens = {
   surfaceElevated: '#F4F1ED',
   textPrimary: '#29231F',
   textSecondary: '#6D625B',
+  // 2.83:1 against the input surface, where real text sits at 5.26:1.
+  textPlaceholder: '#9A8E86',
   divider: '#E9E3DC',
   primary: '#C86F52',
   onPrimary: '#FAF4EC',
@@ -74,7 +82,24 @@ export const darkColors: ColorTokens = {
   surfaceElevated: '#342D29',
   textPrimary: '#FAF4EC',
   textSecondary: '#B9ADA5',
+  // 3.01:1 against the input surface, where real text sits at 7.08:1.
+  textPlaceholder: '#776B64',
   divider: '#453B36',
   primary: '#D98568',
   onPrimary: '#1E1A18',
 };
+
+/**
+ * Explicit line heights for the serif display sizes.
+ *
+ * Android measures a Text from the font's own metrics, and DM Serif Display
+ * overshoots them, so large serif text is clipped at the view bounds without
+ * one of these. iOS lays the same text out fine, which is why it only showed
+ * up for some testers.
+ */
+export const lineHeight = {
+  heading2: 34,
+  heading1: 44,
+  display: 52,
+  displayLarge: 62,
+} as const;

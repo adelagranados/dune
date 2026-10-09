@@ -25,7 +25,7 @@ function combine(day: Date, time: Date): number {
 export default function ManualEntryScreen() {
   const { projectId } = useLocalSearchParams<{ projectId: string }>();
   const { t, i18n } = useTranslation();
-  const { colors, colorScheme, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, colorScheme, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -134,6 +134,7 @@ export default function ManualEntryScreen() {
         style={{
           fontFamily: fontFamily.display,
           fontSize: fontSize.heading1,
+          lineHeight: lineHeight.heading1,
           color: colors.textPrimary,
           marginTop: spacing.lg,
         }}
@@ -244,6 +245,7 @@ export default function ManualEntryScreen() {
           style={{
             fontFamily: fontFamily.display,
             fontSize: fontSize.heading2,
+            lineHeight: lineHeight.heading2,
             color: colors.textPrimary,
             marginTop: spacing.sm,
           }}

@@ -5,7 +5,7 @@ import { useTheme } from '@/ui/theme/ThemeProvider';
 
 export default function StatsScreen() {
   const { t } = useTranslation();
-  const { colors, fontFamily, fontSize } = useTheme();
+  const { colors, fontFamily, fontSize, lineHeight } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -13,6 +13,7 @@ export default function StatsScreen() {
         style={{
           fontFamily: fontFamily.display,
           fontSize: fontSize.heading1,
+          lineHeight: lineHeight.heading1,
           color: colors.textPrimary,
         }}
       >

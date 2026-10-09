@@ -45,7 +45,7 @@ const ACCESSORY_ID = 'sessionLengthCustomMinutes';
 export default function SessionLengthScreen() {
   const { projectId } = useLocalSearchParams<{ projectId: string }>();
   const { t } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const start = useActiveTimerStore((state) => state.start);
@@ -145,6 +145,7 @@ export default function SessionLengthScreen() {
           style={{
             fontFamily: fontFamily.display,
             fontSize: fontSize.heading1,
+            lineHeight: lineHeight.heading1,
             color: colors.textPrimary,
             marginTop: spacing.lg,
           }}
@@ -235,7 +236,7 @@ export default function SessionLengthScreen() {
               value={customMinutes}
               onChangeText={setCustomMinutes}
               placeholder={t('sessionLength.customPlaceholder')}
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.textPlaceholder}
               keyboardType="number-pad"
               inputAccessoryViewID={Platform.OS === 'ios' ? ACCESSORY_ID : undefined}
               style={{
