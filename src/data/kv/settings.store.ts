@@ -1,27 +1,25 @@
-import { createMMKV } from 'react-native-mmkv';
+import { readValue, writeValue } from '@/data/kv/kvStore';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 export type LanguagePreference = 'system' | 'en' | 'es';
 
-const storage = createMMKV({ id: 'dune.settings' });
-
 const KEYS = {
-  themePreference: 'themePreference',
-  language: 'language',
+  themePreference: 'settings.themePreference',
+  language: 'settings.language',
 } as const;
 
 export function getThemePreference(): ThemePreference {
-  return (storage.getString(KEYS.themePreference) as ThemePreference | undefined) ?? 'system';
+  return (readValue(KEYS.themePreference) as ThemePreference | null) ?? 'system';
 }
 
 export function setThemePreference(value: ThemePreference): void {
-  storage.set(KEYS.themePreference, value);
+  writeValue(KEYS.themePreference, value);
 }
 
 export function getLanguagePreference(): LanguagePreference {
-  return (storage.getString(KEYS.language) as LanguagePreference | undefined) ?? 'system';
+  return (readValue(KEYS.language) as LanguagePreference | null) ?? 'system';
 }
 
 export function setLanguagePreference(value: LanguagePreference): void {
-  storage.set(KEYS.language, value);
+  writeValue(KEYS.language, value);
 }

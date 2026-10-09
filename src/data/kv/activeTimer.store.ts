@@ -1,37 +1,38 @@
-import { createMMKV } from 'react-native-mmkv';
-
+import { readValue, removeValue, writeValue } from '@/data/kv/kvStore';
 import type { ActiveTimer } from '@/domain/timer/timerEngine';
 
-const storage = createMMKV({ id: 'dune.timer' });
-
-const ACTIVE_TIMER_KEY = 'activeTimer';
-const LAST_TARGET_KEY = 'lastTargetDurationMs';
-const TARGET_NOTIFICATION_ID_KEY = 'targetNotificationId';
+const ACTIVE_TIMER_KEY = 'timer.active';
+const LAST_TARGET_KEY = 'timer.lastTargetDurationMs';
+const TARGET_NOTIFICATION_ID_KEY = 'timer.targetNotificationId';
 
 export function readActiveTimer(): ActiveTimer | null {
-  const raw = storage.getString(ACTIVE_TIMER_KEY);
+  const raw = readValue(ACTIVE_TIMER_KEY);
   return raw ? (JSON.parse(raw) as ActiveTimer) : null;
 }
 
 export function writeActiveTimer(timer: ActiveTimer): void {
-  storage.set(ACTIVE_TIMER_KEY, JSON.stringify(timer));
+  writeValue(ACTIVE_TIMER_KEY, JSON.stringify(timer));
 }
 
 export function clearActiveTimer(): void {
-  storage.remove(ACTIVE_TIMER_KEY);
+  removeValue(ACTIVE_TIMER_KEY);
 }
 
 /** Remembered so the next session preselects the length you usually pick. 0 means "No limit". */
 export function readLastTargetDurationMs(): number | null {
-  const stored = storage.getNumber(LAST_TARGET_KEY);
-  if (stored === undefined) {
+  const stored = readValue(LAST_TARGET_KEY);
+  if (stored === null) {
     return null;
   }
-  return stored === 0 ? null : stored;
+  const parsed = Number(stored);
+  if (!Number.isFinite(parsed) || parsed === 0) {
+    return null;
+  }
+  return parsed;
 }
 
 export function writeLastTargetDurationMs(targetDurationMs: number | null): void {
-  storage.set(LAST_TARGET_KEY, targetDurationMs ?? 0);
+  writeValue(LAST_TARGET_KEY, String(targetDurationMs ?? 0));
 }
 
 /**
@@ -41,13 +42,13 @@ export function writeLastTargetDurationMs(targetDurationMs: number | null): void
  * be cancelled after the process was killed.
  */
 export function readTargetNotificationId(): string | null {
-  return storage.getString(TARGET_NOTIFICATION_ID_KEY) ?? null;
+  return readValue(TARGET_NOTIFICATION_ID_KEY);
 }
 
 export function writeTargetNotificationId(id: string | null): void {
   if (id === null) {
-    storage.remove(TARGET_NOTIFICATION_ID_KEY);
+    removeValue(TARGET_NOTIFICATION_ID_KEY);
     return;
   }
-  storage.set(TARGET_NOTIFICATION_ID_KEY, id);
+  writeValue(TARGET_NOTIFICATION_ID_KEY, id);
 }
