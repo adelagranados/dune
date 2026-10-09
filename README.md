@@ -85,29 +85,32 @@ Four layers, with the dependency arrows pointing inward:
 
 - **`src/domain`** — pure functions. No React, no React Native, no I/O. Where
   the rules live, and the only layer with unit tests.
-- **`src/data`** — SQLite (Drizzle) for projects and sessions, MMKV for the
-  active timer and settings, and the notification scheduler. Adapters, not
-  rules.
+- **`src/data`** — SQLite (Drizzle) for projects and sessions, a small
+  key/value table in the same database for the active timer and settings, and
+  the notification scheduler. Adapters, not rules.
 - **`src/state`** — Zustand stores that orchestrate the two above and own the
   side effects.
 - **`app` / `src/ui`** — Expo Router screens and the design system.
 
 Two consequences worth naming:
 
-- The scheduled notification's id lives in its own MMKV key rather than on the
+- The scheduled notification's id lives under its own key rather than on the
   `ActiveTimer` type. It belongs to the OS scheduler, not to the session, and
   keeping it out leaves the domain type free of platform concerns.
+- The key/value table is created with a raw statement rather than a Drizzle
+  migration, because the active timer is read at module load — before
+  `useMigrations` has had a chance to run.
 - Rescheduling a notification is deliberately not awaited. The timer is the real
   record of the session; a slow or failing scheduler must never delay the UI or
   lose time.
 
 ## Stack
 
-- **Expo SDK 57** with a custom dev client (not Expo Go) + **Expo Router**
+- **Expo SDK 57** + **Expo Router**
 - **TypeScript**, strict
 - **Zustand** for UI and orchestration state
-- **expo-sqlite** + **Drizzle ORM** for projects and sessions
-- **MMKV** for the active timer and settings
+- **expo-sqlite** + **Drizzle ORM** for projects and sessions, and for the
+  handful of key/value reads the timer needs synchronously at startup
 - **expo-notifications** for target reminders
 - **i18next** / **react-i18next**, with **expo-localization**
 - **Phosphor Icons**, **react-native-svg**
@@ -123,9 +126,10 @@ npm install
 npm run android   # or: npm run ios (requires macOS)
 ```
 
-The project uses a custom Expo dev client because it depends on native modules
-(MMKV, notifications, and eventually WidgetKit/ActivityKit on iOS) that Expo Go
-does not support. `npm run android` builds and installs that client.
+Every native module this project uses ships inside **Expo Go**, so
+`npx expo start` and scanning the QR code also works — useful for running on an
+iPhone without a Mac. Expo Go does not apply config plugins, so the notification
+icon and colour only appear in a real build.
 
 > `.npmrc` sets `legacy-peer-deps`: Expo SDK 57 pins `react` 19.2.3 while
 > `react-dom` resolves to 19.3.0, so a plain install otherwise fails with
@@ -186,7 +190,7 @@ src/
   domain/               # Pure business logic (timer engine, project rules, stats)
   data/
     db/                 # Drizzle schema, client, migrations
-    kv/                 # MMKV stores (active timer, settings)
+    kv/                 # Synchronous key/value store (active timer, settings)
     repositories/       # Queries over the SQLite layer
     notifications/      # Local notification scheduling
   state/                # Zustand stores (orchestration + side effects)
