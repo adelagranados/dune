@@ -126,10 +126,18 @@ npm install
 npm run android   # or: npm run ios (requires macOS)
 ```
 
-Every native module this project uses ships inside **Expo Go**, so
-`npx expo start` and scanning the QR code also works — useful for running on an
-iPhone without a Mac. Expo Go does not apply config plugins, so the notification
-icon and colour only appear in a real build.
+### Running in Expo Go
+
+`npx expo start` and scanning the QR also works, which is the only way to run
+this on an iPhone without a Mac — but it is not the whole app:
+
+|         | Expo Go                                                                                                                                |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| iOS     | everything except config plugins, so the notification icon and colour fall back to Expo's                                              |
+| Android | the same, **and no target reminders** — `expo-notifications` throws there rather than degrading, so the app treats them as unavailable |
+
+On Android a development build removes that limit and costs nothing: attach the
+phone over USB and run `npm run android`.
 
 > `.npmrc` sets `legacy-peer-deps`: Expo SDK 57 pins `react` 19.2.3 while
 > `react-dom` resolves to 19.3.0, so a plain install otherwise fails with
