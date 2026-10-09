@@ -21,6 +21,7 @@ import * as SystemUI from 'expo-system-ui';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { Text, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { db, migrations } from '@/data/db/client';
@@ -103,10 +104,14 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <ThemeProvider>
-        <RootNavigator />
-      </ThemeProvider>
-    </SafeAreaProvider>
+    // Gesture handling needs this at the very root; expo-router does not
+    // mount it, and without it swipes are silently ignored on Android.
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <RootNavigator />
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

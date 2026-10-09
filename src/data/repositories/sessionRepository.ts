@@ -34,3 +34,11 @@ export async function countSessionsByProject(projectId: string): Promise<number>
     .where(eq(sessions.projectId, projectId));
   return rows.length;
 }
+
+/**
+ * Removes one recorded session. The project total is derived by summing the
+ * remaining rows, so nothing else has to be kept in step.
+ */
+export async function deleteSession(id: string): Promise<void> {
+  await db.delete(sessions).where(eq(sessions.id, id));
+}

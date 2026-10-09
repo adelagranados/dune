@@ -2,14 +2,16 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Project, Session } from '@/data/db/schema';
-import { getProjectById } from '@/data/repositories/projectRepository';
-import { listSessionsByProject } from '@/data/repositories/sessionRepository';
+import { deleteProject, getProjectById } from '@/data/repositories/projectRepository';
+import { deleteSession, listSessionsByProject } from '@/data/repositories/sessionRepository';
 import { formatDuration, isSameDay } from '@/lib/time';
 import { useActiveTimerStore } from '@/state/useActiveTimerStore';
 import { Button } from '@/ui/components/Button';
+import { ConfirmDialog } from '@/ui/components/ConfirmDialog';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
 export default function ProjectDetailScreen() {
@@ -22,6 +24,8 @@ export default function ProjectDetailScreen() {
   const [project, setProject] = useState<Project | null>(null);
   const [sessions, setSessions] = useState<Session[] | null>(null);
   const [loadedAt, setLoadedAt] = useState(0);
+  const [sessionToDelete, setSessionToDelete] = useState<Session | null>(null);
+  const [projectDeleteOpen, setProjectDeleteOpen] = useState(false);
   const activeTimer = useActiveTimerStore((state) => state.timer);
 
   useFocusEffect(
@@ -35,6 +39,29 @@ export default function ProjectDetailScreen() {
       });
     }, [id]),
   );
+
+  const reload = useCallback(() => {
+    listSessionsByProject(id).then((rows) => {
+      setSessions(rows);
+      setLoadedAt(Date.now());
+    });
+  }, [id]);
+
+  const handleDeleteSession = () => {
+    if (!sessionToDelete) {
+      return;
+    }
+    const id = sessionToDelete.id;
+    setSessionToDelete(null);
+    void deleteSession(id).then(reload);
+  };
+
+  const handleDeleteProject = () => {
+    setProjectDeleteOpen(false);
+    if (project) {
+      void deleteProject(project.id).then(() => router.replace('/'));
+    }
+  };
 
   const containerStyle = {
     flex: 1,
@@ -211,9 +238,34 @@ export default function ProjectDetailScreen() {
       ) : (
         <View style={{ marginTop: spacing.lg }}>
           {sessions.map((session) => (
-            <View
+            <ReanimatedSwipeable
               key={session.id}
-              style={{
+              friction={2}
+              rightThreshold={40}
+              renderRightActions={() => (
+                <Pressable
+                  onPress={() => setSessionToDelete(session)}
+                  accessibilityRole="button"
+                  style={{
+                    justifyContent: 'center',
+                    paddingHorizontal: spacing.xl,
+                    marginVertical: spacing.xs,
+                    borderRadius: radius.sm,
+                    backgroundColor: colors.danger,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: fontFamily.bodySemiBold,
+                      fontSize: fontSize.secondary,
+                      color: colors.onPrimary,
+                    }}
+                  >
+                    {t('common.delete')}
+                  </Text>
+                </Pressable>
+              )}
+              containerStyle={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -244,7 +296,7 @@ export default function ProjectDetailScreen() {
               >
                 {formatDuration(session.durationMs)}
               </Text>
-            </View>
+            </ReanimatedSwipeable>
           ))}
         </View>
       )}
@@ -265,6 +317,49 @@ export default function ProjectDetailScreen() {
           router.push({ pathname: '/manual-entry', params: { projectId: project.id } })
         }
         style={{ marginTop: spacing.lg }}
+      />
+
+      <Pressable
+        onPress={() => setProjectDeleteOpen(true)}
+        accessibilityRole="button"
+        style={{ alignItems: 'center', paddingVertical: spacing.lg, marginTop: spacing.lg }}
+      >
+        <Text
+          style={{
+            fontFamily: fontFamily.bodyMedium,
+            fontSize: fontSize.secondary,
+            color: colors.textSecondary,
+          }}
+        >
+          {t('projectDetail.deleteProject')}
+        </Text>
+      </Pressable>
+      <ConfirmDialog
+        visible={sessionToDelete !== null}
+        title={t('projectDetail.deleteSessionTitle')}
+        message={t('projectDetail.deleteSessionMessage', {
+          duration: formatDuration(sessionToDelete?.durationMs ?? 0),
+        })}
+        confirmLabel={t('common.delete')}
+        cancelLabel={t('common.cancel')}
+        destructive
+        onConfirm={handleDeleteSession}
+        onCancel={() => setSessionToDelete(null)}
+      />
+
+      <ConfirmDialog
+        visible={projectDeleteOpen}
+        title={t('projectDetail.deleteProjectTitle', { name: project.name })}
+        message={
+          sessions.length === 0
+            ? t('projectDetail.deleteProjectMessageEmpty')
+            : t('projectDetail.deleteProjectMessage', { count: sessions.length })
+        }
+        confirmLabel={t('common.delete')}
+        cancelLabel={t('common.cancel')}
+        destructive
+        onConfirm={handleDeleteProject}
+        onCancel={() => setProjectDeleteOpen(false)}
       />
     </ScrollView>
   );

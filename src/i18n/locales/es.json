@@ -1,7 +1,9 @@
 {
   "common": {
     "appName": "Dune",
-    "done": "Listo"
+    "done": "Listo",
+    "cancel": "Cancelar",
+    "delete": "Eliminar"
   },
   "tabs": {
     "home": "Inicio",
@@ -42,7 +44,14 @@
     "openTimer": "Ver timer en curso",
     "addManualEntry": "Agregar tiempo manual",
     "today": "Hoy",
-    "yesterday": "Ayer"
+    "yesterday": "Ayer",
+    "deleteSessionTitle": "¿Eliminar esta sesión?",
+    "deleteSessionMessage": "Se quitarán {{duration}} de este proyecto.",
+    "deleteProject": "Eliminar proyecto",
+    "deleteProjectTitle": "¿Eliminar {{name}}?",
+    "deleteProjectMessage_one": "También se eliminará su {{count}} sesión. Esto no se puede deshacer.",
+    "deleteProjectMessage_other": "También se eliminarán sus {{count}} sesiones. Esto no se puede deshacer.",
+    "deleteProjectMessageEmpty": "Esto no se puede deshacer."
   },
   "sessionLength": {
     "title": "Define tu meta de tiempo",

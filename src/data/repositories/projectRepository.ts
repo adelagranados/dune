@@ -63,3 +63,22 @@ export async function getDistinctCategories(): Promise<string[]> {
   }
   return Array.from(categories);
 }
+
+/**
+ * Removes a project together with every session recorded against it.
+ *
+ * The sessions are deleted explicitly rather than left to the database: the
+ * foreign key is declared without `onDelete: 'cascade'`, and SQLite only
+ * enforces foreign keys when the connection asks it to. Relying on either
+ * would risk leaving rows pointing at a project that no longer exists, which
+ * would then be counted by nothing and found by no screen.
+ *
+ * Both deletes share a transaction so a failure cannot strip the sessions and
+ * leave the project standing.
+ */
+export async function deleteProject(id: string): Promise<void> {
+  await db.transaction(async (tx) => {
+    await tx.delete(sessions).where(eq(sessions.projectId, id));
+    await tx.delete(projects).where(eq(projects.id, id));
+  });
+}
