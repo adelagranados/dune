@@ -15,7 +15,7 @@ const DEFAULT_CATEGORY_SUGGESTIONS = ['Coding', 'Creative', 'Learning'];
 
 export default function CreateProjectScreen() {
   const { t } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -80,6 +80,7 @@ export default function CreateProjectScreen() {
         style={{
           fontFamily: fontFamily.display,
           fontSize: fontSize.display,
+          lineHeight: lineHeight.display,
           color: colors.textPrimary,
           marginTop: spacing.lg,
         }}

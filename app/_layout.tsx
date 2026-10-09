@@ -17,6 +17,7 @@ import {
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import * as SystemUI from 'expo-system-ui';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { Text, View } from 'react-native';
@@ -33,6 +34,14 @@ void SplashScreen.preventAutoHideAsync();
 function RootNavigator() {
   const { colors, colorScheme } = useTheme();
   const { success, error } = useMigrations(db, migrations);
+
+  // `contentStyle` only covers a screen's own content. During a transition
+  // react-native-screens shows the native window background underneath, which
+  // on Android is still the splash drawable - a bright flash between screens,
+  // worst in dark mode. This paints the root view itself.
+  useEffect(() => {
+    void SystemUI.setBackgroundColorAsync(colors.background);
+  }, [colors.background]);
 
   if (error) {
     return (

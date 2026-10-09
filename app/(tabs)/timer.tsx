@@ -15,7 +15,7 @@ import { useTheme } from '@/ui/theme/ThemeProvider';
 
 export default function ActiveTimerScreen() {
   const { t, i18n } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -42,12 +42,15 @@ export default function ActiveTimerScreen() {
   // The clock is only a view of the timestamps: this re-renders every second
   // while the screen is up, and resyncs on foreground since JS timers are
   // throttled in the background.
+  //
+  // It deliberately does not depend on whether the timer is running. Keying it
+  // on that rebuilt the interval on every pause and resume, firing an extra
+  // tick on each side of the transition and repainting the clock out of step —
+  // which is what read as a flicker. `computeActiveElapsedMs` already freezes
+  // while paused, so ticking through a pause renders the same value and costs
+  // nothing.
   useFocusEffect(
     useCallback(() => {
-      if (!isRunning) {
-        setNow(Date.now());
-        return;
-      }
       setNow(Date.now());
       const interval = setInterval(() => setNow(Date.now()), 1000);
       const subscription = AppState.addEventListener('change', (status) => {
@@ -57,7 +60,7 @@ export default function ActiveTimerScreen() {
         clearInterval(interval);
         subscription.remove();
       };
-    }, [isRunning]),
+    }, []),
   );
 
   if (!timer) {
@@ -147,6 +150,7 @@ export default function ActiveTimerScreen() {
           style={{
             fontFamily: fontFamily.displayItalic,
             fontSize: fontSize.displayLarge,
+            lineHeight: lineHeight.displayLarge,
             color: colors.textPrimary,
             marginTop: spacing['2xl'],
           }}

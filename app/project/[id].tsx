@@ -15,7 +15,7 @@ import { useTheme } from '@/ui/theme/ThemeProvider';
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t, i18n } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -90,6 +90,7 @@ export default function ProjectDetailScreen() {
         style={{
           fontFamily: fontFamily.displayItalic,
           fontSize: fontSize.display,
+          lineHeight: lineHeight.display,
           color: colors.textPrimary,
           marginTop: spacing.xl,
         }}
@@ -132,6 +133,7 @@ export default function ProjectDetailScreen() {
           style={{
             fontFamily: fontFamily.displayItalic,
             fontSize: fontSize.display,
+            lineHeight: lineHeight.display,
             color: colors.textPrimary,
             marginTop: spacing.sm,
           }}

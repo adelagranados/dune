@@ -8,6 +8,7 @@ import {
   fontFamily,
   fontSize,
   lightColors,
+  lineHeight,
   radius,
   spacing,
   type ColorTokens,
@@ -20,6 +21,7 @@ type Theme = {
   radius: typeof radius;
   fontSize: typeof fontSize;
   fontFamily: typeof fontFamily;
+  lineHeight: typeof lineHeight;
 };
 
 const ThemeContext = createContext<Theme | null>(null);
@@ -39,6 +41,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       radius,
       fontSize,
       fontFamily,
+      lineHeight,
     }),
     [colorScheme],
   );

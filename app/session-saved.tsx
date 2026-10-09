@@ -17,7 +17,7 @@ export default function SessionSavedScreen() {
     durationMs: string;
   }>();
   const { t } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -60,6 +60,7 @@ export default function SessionSavedScreen() {
         style={{
           fontFamily: fontFamily.displayItalic,
           fontSize: fontSize.displayLarge,
+          lineHeight: lineHeight.displayLarge,
           color: colors.textPrimary,
           marginTop: spacing.xl,
         }}
@@ -70,6 +71,7 @@ export default function SessionSavedScreen() {
         style={{
           fontFamily: fontFamily.displayItalic,
           fontSize: fontSize.display,
+          lineHeight: lineHeight.display,
           color: colors.textPrimary,
         }}
       >
