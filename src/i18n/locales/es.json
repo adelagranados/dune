@@ -1,6 +1,7 @@
 {
   "common": {
-    "appName": "Dune"
+    "appName": "Dune",
+    "done": "Listo"
   },
   "tabs": {
     "home": "Inicio",
