@@ -116,6 +116,18 @@
     "placeholder": "Stats"
   },
   "settings": {
-    "placeholder": "Settings"
+    "title": "Settings",
+    "theme": "Theme",
+    "themeOptions": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": "Language",
+    "languageOptions": {
+      "system": "System",
+      "en": "English",
+      "es": "Español"
+    }
   }
 }
