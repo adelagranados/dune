@@ -2,38 +2,119 @@
 
 > Time accumulates.
 
-Dune is a personal time-tracking app for projects — the question it answers is
-"how long did this actually take me?", not employee productivity or billing.
+[![CI](https://github.com/adelagranados/dune/actions/workflows/ci.yml/badge.svg)](https://github.com/adelagranados/dune/actions/workflows/ci.yml)
+
+Dune is a personal time-tracking app for projects. The question it answers is
+"how long did this actually take me?" — not employee productivity, not billing.
 No streaks, no scores, no guilt.
 
-This is a personal product and a portfolio project, built with production-grade
-architecture rather than as a demo.
+It is a personal product and a portfolio project, built with the architecture a
+real product would need rather than as a demo.
+
+|                Home                |                        Project                         |                          Goal                          |                       Timer                        |                        Saved                         |
+| :--------------------------------: | :----------------------------------------------------: | :----------------------------------------------------: | :------------------------------------------------: | :--------------------------------------------------: |
+| ![Home](docs/screenshots/home.png) | ![Project detail](docs/screenshots/project-detail.png) | ![Session length](docs/screenshots/session-length.png) | ![Active timer](docs/screenshots/active-timer.png) | ![Session saved](docs/screenshots/session-saved.png) |
 
 ## Status
 
-Early development. Currently implemented:
+Working end to end, verified on an Android device:
 
-- Project scaffolding: Expo (SDK 57) + TypeScript (strict) + Expo Router
-- Design tokens (light/dark) extracted from the Figma design system, wired
-  through a `ThemeProvider`
-- i18n (English/Spanish) via i18next, following device language with an
-  English fallback
-- Settings persistence (theme/language) in MMKV, exposed through a Zustand
-  store
+- **Projects** — create, with a free-text category, colour and optional time
+  estimate; a detail screen with the accumulated total and progress against
+  that estimate
+- **Timer** — session length goal, pause/resume, finish; survives backgrounding,
+  the lock screen and a full app relaunch
+- **Target notifications** — a local reminder when the goal is reached,
+  rescheduled around pauses
+- **Manual entry** — add time tracked outside the app
+- **Design system** — semantic light/dark tokens extracted from Figma
+- **i18n** — English and Spanish, following the device language
 
-Not built yet: the actual product screens (Home, Create Project, Timer, Stats,
-Settings), the local SQLite data layer, and the timer engine itself.
+Not built yet: **Stats**, **Settings** and **Project Completed**. iOS has not
+been run yet. See the [issue board](https://github.com/adelagranados/dune/issues)
+for what is left.
+
+## How the timer works
+
+This is the part worth reading.
+
+The timer never counts. There is no interval incrementing a number, because any
+such number is wrong the moment the OS suspends the process. Instead a session
+is three timestamps, and elapsed time is always **derived**:
+
+```ts
+elapsed = (pausedAt ?? now) - startedAt - accumulatedPausedMs;
+```
+
+`startedAt` is fixed when the session begins and never changes. A pause records
+when it began; resuming folds that interval into `accumulatedPausedMs`. There is
+nothing to "resume" after the app is killed, because nothing was ever running —
+reading the three timestamps back from storage reconstructs the exact elapsed
+time. The 1-second tick in the UI only triggers a re-render; it is not the
+source of truth.
+
+The engine in [`src/domain/timer/timerEngine.ts`](src/domain/timer/timerEngine.ts)
+is pure, has no React Native dependency, and takes `now` as an explicit argument
+rather than calling `Date.now()` internally — which is what makes the whole
+thing testable with fixed timestamps.
+
+**The target is a reminder, not a cap.** Reaching it never stops the timer, and
+the session records the real elapsed time, however far past the goal it ran.
+
+### Why the notification is not state
+
+The target is measured in **active work time**, but a notification can only be
+scheduled against **wall-clock time**. Those two line up only while the timer is
+running, so the scheduled notification is never trusted — it is re-derived from
+the timer on every transition:
+
+| Transition | What happens                                 |
+| ---------- | -------------------------------------------- |
+| Start      | schedule at `now + target`                   |
+| Pause      | cancel — a frozen clock has no future moment |
+| Resume     | schedule at `now + remaining active time`    |
+| Finish     | cancel                                       |
+
+A 45-minute goal paused for 20 minutes fires 65 minutes after the start.
+Verified against `dumpsys alarm` on a device: a 74-second pause moved the
+scheduled alarm by exactly 74 seconds.
+
+## Architecture
+
+Four layers, with the dependency arrows pointing inward:
+
+- **`src/domain`** — pure functions. No React, no React Native, no I/O. Where
+  the rules live, and the only layer with unit tests.
+- **`src/data`** — SQLite (Drizzle) for projects and sessions, MMKV for the
+  active timer and settings, and the notification scheduler. Adapters, not
+  rules.
+- **`src/state`** — Zustand stores that orchestrate the two above and own the
+  side effects.
+- **`app` / `src/ui`** — Expo Router screens and the design system.
+
+Two consequences worth naming:
+
+- The scheduled notification's id lives in its own MMKV key rather than on the
+  `ActiveTimer` type. It belongs to the OS scheduler, not to the session, and
+  keeping it out leaves the domain type free of platform concerns.
+- Rescheduling a notification is deliberately not awaited. The timer is the real
+  record of the session; a slow or failing scheduler must never delay the UI or
+  lose time.
 
 ## Stack
 
-- **Expo** (dev client, no Expo Go) + **Expo Router**
-- **TypeScript**, strict mode
-- **Zustand** for UI state
-- **SQLite** (via `expo-sqlite` + Drizzle) for projects/sessions, **MMKV** for
-  the active timer and settings — not wired up yet
-- **i18next** / **react-i18next** for localization
-- **Phosphor Icons** (planned)
-- **Vitest** for domain-layer unit tests (planned)
+- **Expo SDK 57** with a custom dev client (not Expo Go) + **Expo Router**
+- **TypeScript**, strict
+- **Zustand** for UI and orchestration state
+- **expo-sqlite** + **Drizzle ORM** for projects and sessions
+- **MMKV** for the active timer and settings
+- **expo-notifications** for target reminders
+- **i18next** / **react-i18next**, with **expo-localization**
+- **Phosphor Icons**, **react-native-svg**
+- **Vitest** for the domain layer
+
+Offline-first by design: there is no backend, and the schema is shaped so sync
+could be added later without a migration.
 
 ## Getting started
 
@@ -42,34 +123,63 @@ npm install
 npm run android   # or: npm run ios (requires macOS)
 ```
 
-The project uses a custom Expo dev client (not Expo Go), since it depends on
-native modules (MMKV, and eventually WidgetKit/ActivityKit on iOS) that Expo
-Go doesn't support. `npm run android` / `npm run ios` build and install that
-dev client automatically.
+The project uses a custom Expo dev client because it depends on native modules
+(MMKV, notifications, and eventually WidgetKit/ActivityKit on iOS) that Expo Go
+does not support. `npm run android` builds and installs that client.
 
-### Windows-specific note
+> `.npmrc` sets `legacy-peer-deps`: Expo SDK 57 pins `react` 19.2.3 while
+> `react-dom` resolves to 19.3.0, so a plain install otherwise fails with
+> `ERESOLVE`.
 
-If the Android build fails with `Filename longer than 260 characters` during
-a native module's C++ codegen step, make sure
-`react-native-gesture-handler` is pinned to the version Expo's SDK
-compatibility table recommends (`npx expo install --check`) — a newer major
-version restructured its Fabric codegen paths in a way that exceeds Windows'
-path length limit.
+### Windows note
+
+If the Android build fails with `Filename longer than 260 characters` during a
+native module's C++ codegen step, check that `react-native-gesture-handler`
+matches the version Expo's compatibility table recommends
+(`npx expo install --check`). A newer major version restructured its Fabric
+codegen paths in a way that exceeds Windows' path limit — enabling long paths in
+the registry does **not** fix it, because the bundled `ninja.exe` is not
+long-path aware.
+
+## Development workflow
+
+`main` is protected: it only moves through pull requests that pass CI.
+
+```bash
+git checkout -b feat/<issue>-<short-name>
+# ... work, commit ...
+gh pr create          # the template asks for what / why / how it was verified
+```
+
+Every pull request runs the same four checks, cheapest first:
+
+```bash
+npm run format:check
+npm run lint
+npm run typecheck
+npm test
+```
+
+PRs are squash-merged, so one issue becomes one commit on `main`.
 
 ## Project structure
 
 ```
-app/                  # Expo Router routes (screens)
+app/                    # Expo Router routes (screens)
 src/
-  domain/             # Pure business logic (timer engine, stats, project rules)
-  data/                # SQLite schema/repositories, MMKV key-value stores
-  state/               # Zustand stores (orchestration + side effects)
-  notifications/       # Local notification scheduling
-  ui/                  # Design system components, theme, icons
-  i18n/                # Translations
-  lib/                 # Small framework-agnostic helpers
+  domain/               # Pure business logic (timer engine, project rules, stats)
+  data/
+    db/                 # Drizzle schema, client, migrations
+    kv/                 # MMKV stores (active timer, settings)
+    repositories/       # Queries over the SQLite layer
+    notifications/      # Local notification scheduling
+  state/                # Zustand stores (orchestration + side effects)
+  ui/                   # Design system components, theme tokens, icons
+  i18n/                 # Translations
+  lib/                  # Small framework-agnostic helpers
+docs/screenshots/       # Images used by this README
 ```
 
 ## License
 
-MIT
+[MIT](LICENSE)
