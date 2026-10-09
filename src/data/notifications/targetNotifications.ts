@@ -1,4 +1,4 @@
-import * as Notifications from 'expo-notifications';
+import { isRunningInExpoGo } from 'expo';
 import { t } from 'i18next';
 import { Platform } from 'react-native';
 
@@ -10,10 +10,36 @@ import { formatDuration } from '@/lib/time';
 const CHANNEL_ID = 'session-target';
 
 /**
+ * expo-notifications cannot run inside Expo Go on Android: push support was
+ * removed in SDK 53 and the library throws rather than degrading, which takes
+ * the whole app down on launch. On iOS the same library only warns, which is
+ * why this asymmetry is easy to miss.
+ *
+ * The timer is the real record of a session and the reminder is a courtesy, so
+ * when the module is unusable everything here becomes a no-op and the session
+ * length screen reports that notifications are off.
+ *
+ * A development build has no such limit — on Android it is `expo run:android`
+ * away.
+ */
+const notificationsAvailable = !(isRunningInExpoGo() && Platform.OS === 'android');
+
+/** Required lazily so Expo Go on Android never even evaluates the module. */
+function getNotifications() {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- see above
+  return require('expo-notifications') as typeof import('expo-notifications');
+}
+
+/**
  * Has to run before the first permission request: on Android 13+ the system
  * prompt never appears until the app has declared at least one channel.
  */
 export async function configureTargetNotifications(): Promise<void> {
+  if (!notificationsAvailable) {
+    return;
+  }
+  const Notifications = getNotifications();
+
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowBanner: true,
@@ -33,13 +59,23 @@ export async function configureTargetNotifications(): Promise<void> {
 }
 
 export async function hasNotificationPermission(): Promise<boolean> {
-  const { granted } = await Notifications.getPermissionsAsync();
+  if (!notificationsAvailable) {
+    return false;
+  }
+  const { granted } = await getNotifications().getPermissionsAsync();
   return granted;
 }
 
-/** True only when the user denied permission for good — not on a first run. */
+/**
+ * True when no reminder can be delivered and asking again will not help —
+ * either the user denied permission for good, or the runtime cannot schedule
+ * notifications at all.
+ */
 export async function isNotificationPermissionBlocked(): Promise<boolean> {
-  const { granted, canAskAgain } = await Notifications.getPermissionsAsync();
+  if (!notificationsAvailable) {
+    return true;
+  }
+  const { granted, canAskAgain } = await getNotifications().getPermissionsAsync();
   return !granted && !canAskAgain;
 }
 
@@ -48,6 +84,11 @@ export async function isNotificationPermissionBlocked(): Promise<boolean> {
  * instead of on launch where the request would have no context.
  */
 export async function ensureNotificationPermission(): Promise<boolean> {
+  if (!notificationsAvailable) {
+    return false;
+  }
+  const Notifications = getNotifications();
+
   const { granted, canAskAgain } = await Notifications.getPermissionsAsync();
   if (granted) {
     return true;
@@ -60,13 +101,16 @@ export async function ensureNotificationPermission(): Promise<boolean> {
 }
 
 export async function cancelTargetNotification(): Promise<void> {
+  if (!notificationsAvailable) {
+    return;
+  }
   const id = readTargetNotificationId();
   if (id === null) {
     return;
   }
   // Cleared first so a failing cancel cannot leave a stale id behind.
   writeTargetNotificationId(null);
-  await Notifications.cancelScheduledNotificationAsync(id);
+  await getNotifications().cancelScheduledNotificationAsync(id);
 }
 
 /**
@@ -81,6 +125,9 @@ export async function syncTargetNotification(
   timer: ActiveTimer | null,
   now: number,
 ): Promise<void> {
+  if (!notificationsAvailable) {
+    return;
+  }
   await cancelTargetNotification();
 
   if (timer === null) {
@@ -94,6 +141,7 @@ export async function syncTargetNotification(
     return;
   }
 
+  const Notifications = getNotifications();
   const project = await getProjectById(timer.projectId);
   const id = await Notifications.scheduleNotificationAsync({
     content: {
