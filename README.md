@@ -131,6 +131,22 @@ does not support. `npm run android` builds and installs that client.
 > `react-dom` resolves to 19.3.0, so a plain install otherwise fails with
 > `ERESOLVE`.
 
+### After changing native config
+
+`android/` and `ios/` are generated and not tracked. `npm run android` reuses
+whatever is already there, so **changes to `app.json` — the app name, a config
+plugin, an icon — are silently ignored until the native project is
+regenerated**:
+
+```bash
+npm run prebuild   # expo prebuild --clean
+npm run android
+```
+
+This is easy to miss, because the app builds and runs fine with the stale
+configuration. A config plugin that was added but never prebuilt simply has no
+effect.
+
 ### Windows note
 
 If the Android build fails with `Filename longer than 260 characters` during a
