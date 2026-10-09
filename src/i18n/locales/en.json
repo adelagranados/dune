@@ -1,7 +1,9 @@
 {
   "common": {
     "appName": "Dune",
-    "done": "Done"
+    "done": "Done",
+    "cancel": "Cancel",
+    "delete": "Delete"
   },
   "tabs": {
     "home": "Home",
@@ -42,7 +44,15 @@
     "openTimer": "Open running timer",
     "addManualEntry": "Add time manually",
     "today": "Today",
-    "yesterday": "Yesterday"
+    "yesterday": "Yesterday",
+    "sessionsHint": "Press and hold a session to delete it.",
+    "deleteSessionTitle": "Delete this session?",
+    "deleteSessionMessage": "{{duration}} will be removed from this project.",
+    "deleteProject": "Delete project",
+    "deleteProjectTitle": "Delete {{name}}?",
+    "deleteProjectMessage_one": "Its {{count}} session will be deleted too. This cannot be undone.",
+    "deleteProjectMessage_other": "Its {{count}} sessions will be deleted too. This cannot be undone.",
+    "deleteProjectMessageEmpty": "This cannot be undone."
   },
   "sessionLength": {
     "title": "Set a time goal",

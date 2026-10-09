@@ -1,12 +1,12 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Project, Session } from '@/data/db/schema';
-import { getProjectById } from '@/data/repositories/projectRepository';
-import { listSessionsByProject } from '@/data/repositories/sessionRepository';
+import { deleteProject, getProjectById } from '@/data/repositories/projectRepository';
+import { deleteSession, listSessionsByProject } from '@/data/repositories/sessionRepository';
 import { formatDuration, isSameDay } from '@/lib/time';
 import { useActiveTimerStore } from '@/state/useActiveTimerStore';
 import { Button } from '@/ui/components/Button';
@@ -35,6 +35,53 @@ export default function ProjectDetailScreen() {
       });
     }, [id]),
   );
+
+  const reload = useCallback(() => {
+    listSessionsByProject(id).then((rows) => {
+      setSessions(rows);
+      setLoadedAt(Date.now());
+    });
+  }, [id]);
+
+  const confirmDeleteSession = (session: Session) => {
+    Alert.alert(
+      t('projectDetail.deleteSessionTitle'),
+      t('projectDetail.deleteSessionMessage', { duration: formatDuration(session.durationMs) }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: () => {
+            void deleteSession(session.id).then(reload);
+          },
+        },
+      ],
+    );
+  };
+
+  const confirmDeleteProject = () => {
+    if (!project) {
+      return;
+    }
+    const count = sessions?.length ?? 0;
+    Alert.alert(
+      t('projectDetail.deleteProjectTitle', { name: project.name }),
+      count === 0
+        ? t('projectDetail.deleteProjectMessageEmpty')
+        : t('projectDetail.deleteProjectMessage', { count }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: () => {
+            void deleteProject(project.id).then(() => router.replace('/'));
+          },
+        },
+      ],
+    );
+  };
 
   const containerStyle = {
     flex: 1,
@@ -197,6 +244,18 @@ export default function ProjectDetailScreen() {
       >
         {t('projectDetail.yourSessions')}
       </Text>
+      {sessions.length > 0 ? (
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.label,
+            color: colors.textSecondary,
+            marginTop: spacing.xs,
+          }}
+        >
+          {t('projectDetail.sessionsHint')}
+        </Text>
+      ) : null}
       {sessions.length === 0 ? (
         <Text
           style={{
@@ -211,8 +270,9 @@ export default function ProjectDetailScreen() {
       ) : (
         <View style={{ marginTop: spacing.lg }}>
           {sessions.map((session) => (
-            <View
+            <Pressable
               key={session.id}
+              onLongPress={() => confirmDeleteSession(session)}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -244,7 +304,7 @@ export default function ProjectDetailScreen() {
               >
                 {formatDuration(session.durationMs)}
               </Text>
-            </View>
+            </Pressable>
           ))}
         </View>
       )}
@@ -266,6 +326,22 @@ export default function ProjectDetailScreen() {
         }
         style={{ marginTop: spacing.lg }}
       />
+
+      <Pressable
+        onPress={confirmDeleteProject}
+        accessibilityRole="button"
+        style={{ alignItems: 'center', paddingVertical: spacing.lg, marginTop: spacing.lg }}
+      >
+        <Text
+          style={{
+            fontFamily: fontFamily.bodyMedium,
+            fontSize: fontSize.secondary,
+            color: colors.textSecondary,
+          }}
+        >
+          {t('projectDetail.deleteProject')}
+        </Text>
+      </Pressable>
     </ScrollView>
   );
 }
