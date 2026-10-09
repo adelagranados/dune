@@ -58,6 +58,13 @@ export type ColorTokens = {
   primary: string;
   /** Text/icons rendered on top of `primary` — not simply white. */
   onPrimary: string;
+  /**
+   * Destructive actions. Not in the Figma palette: deleting only became
+   * possible later, and the terracotta primary is too close to a warning
+   * colour to carry the meaning on its own. Sits at hue ~6-9 against the
+   * primary's ~15, so it reads as red rather than as the brand.
+   */
+  danger: string;
 };
 
 export const lightColors: ColorTokens = {
@@ -74,6 +81,7 @@ export const lightColors: ColorTokens = {
   divider: '#E9E3DC',
   primary: '#C86F52',
   onPrimary: '#FAF4EC',
+  danger: '#A8372A',
 };
 
 export const darkColors: ColorTokens = {
@@ -87,6 +95,7 @@ export const darkColors: ColorTokens = {
   divider: '#453B36',
   primary: '#D98568',
   onPrimary: '#1E1A18',
+  danger: '#E8705C',
 };
 
 /**

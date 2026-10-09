@@ -45,7 +45,6 @@
     "addManualEntry": "Add time manually",
     "today": "Today",
     "yesterday": "Yesterday",
-    "sessionsHint": "Press and hold a session to delete it.",
     "deleteSessionTitle": "Delete this session?",
     "deleteSessionMessage": "{{duration}} will be removed from this project.",
     "deleteProject": "Delete project",

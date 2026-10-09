@@ -45,7 +45,6 @@
     "addManualEntry": "Agregar tiempo manual",
     "today": "Hoy",
     "yesterday": "Ayer",
-    "sessionsHint": "Mantén presionada una sesión para eliminarla.",
     "deleteSessionTitle": "¿Eliminar esta sesión?",
     "deleteSessionMessage": "Se quitarán {{duration}} de este proyecto.",
     "deleteProject": "Eliminar proyecto",

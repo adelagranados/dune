@@ -205,7 +205,9 @@ src/
   ui/                   # Design system components, theme tokens, icons
   i18n/                 # Translations
   lib/                  # Small framework-agnostic helpers
-docs/screenshots/       # Images used by this README
+docs/
+  color-tokens.md       # Where the code's palette differs from Figma, and why
+  screenshots/          # Images used by this README
 ```
 
 ## License
