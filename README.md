@@ -143,6 +143,23 @@ phone over USB and run `npm run android`.
 > `react-dom` resolves to 19.3.0, so a plain install otherwise fails with
 > `ERESOLVE`.
 
+### After installing a dependency
+
+Some packages add a Babel plugin through `babel-preset-expo` — Reanimated and
+Worklets do. `babel.config.js` calls `api.cache(true)`, so Babel never
+re-evaluates its config, and Metro goes on serving modules transformed _without_
+the new plugin.
+
+The symptoms are at runtime, not at build time, and they point somewhere
+unrelated: `Cannot read property 'code' of undefined` in a layout file, or a
+screen that crashes the app on open. Nothing in the build fails.
+
+Restart Metro with its cache cleared after any dependency change:
+
+```bash
+npx expo start --clear
+```
+
 ### After changing native config
 
 `android/` and `ios/` are generated and not tracked. `npm run android` reuses
