@@ -20,7 +20,7 @@ export default function CreateProjectScreen() {
   const router = useRouter();
 
   const [name, setName] = useState('');
-  const [category, setCategory] = useState<string | null>(null);
+  const [category, setCategory] = useState('');
   const [color, setColor] = useState(PROJECT_COLORS[0]);
   const [estimatedHours, setEstimatedHours] = useState('');
   const [categorySuggestions, setCategorySuggestions] = useState<string[]>(
@@ -29,9 +29,16 @@ export default function CreateProjectScreen() {
 
   useEffect(() => {
     getDistinctCategories().then((existing) => {
-      if (existing.length > 0) {
-        setCategorySuggestions(existing);
+      // Merged, not replaced: categories already in use come first because they
+      // are the likeliest next pick, and the defaults stay available behind
+      // them. Replacing made the list shrink as the app got used.
+      const merged = [...existing];
+      for (const suggestion of DEFAULT_CATEGORY_SUGGESTIONS) {
+        if (!merged.includes(suggestion)) {
+          merged.push(suggestion);
+        }
       }
+      setCategorySuggestions(merged);
     });
   }, []);
 
@@ -44,7 +51,7 @@ export default function CreateProjectScreen() {
     const hours = Number.parseFloat(estimatedHours);
     await createProject({
       name: name.trim(),
-      category,
+      category: category.trim() || null,
       color,
       estimatedTimeMs:
         Number.isFinite(hours) && hours > 0 ? Math.round(hours * 60 * 60 * 1000) : null,
@@ -99,25 +106,27 @@ export default function CreateProjectScreen() {
       />
 
       <View style={{ marginTop: spacing.xl }}>
-        <Text
+        <TextField
+          label={t('createProject.categoryLabel')}
+          value={category}
+          onChangeText={setCategory}
+          placeholder={t('createProject.categoryPlaceholder')}
+        />
+        {/* The chips are shortcuts into the field, not a closed set of choices. */}
+        <View
           style={{
-            fontFamily: fontFamily.bodySemiBold,
-            fontSize: fontSize.label,
-            color: colors.textSecondary,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            marginBottom: spacing.sm,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: spacing.sm,
+            marginTop: spacing.md,
           }}
         >
-          {t('createProject.categoryLabel')}
-        </Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
           {categorySuggestions.map((suggestion) => (
             <Chip
               key={suggestion}
               label={suggestion}
-              selected={category === suggestion}
-              onPress={() => setCategory(category === suggestion ? null : suggestion)}
+              selected={category.trim() === suggestion}
+              onPress={() => setCategory(category.trim() === suggestion ? '' : suggestion)}
             />
           ))}
         </View>

@@ -22,6 +22,7 @@
     "nameLabel": "Nombre del proyecto",
     "namePlaceholder": "Dog App",
     "categoryLabel": "Categoría",
+    "categoryPlaceholder": "Programación",
     "colorLabel": "Color",
     "estimatedLabel": "Tiempo estimado · opcional",
     "estimatedPlaceholder": "20",
