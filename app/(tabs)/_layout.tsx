@@ -7,12 +7,21 @@ import { ActiveTimerMiniBar } from '@/ui/components/ActiveTimerMiniBar';
 import { HomeIcon, SettingsIcon, StatsIcon } from '@/ui/icons';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
-/** Matches the bottom nav height in the design, and anchors the mini bar above it. */
-const TAB_BAR_HEIGHT = 76;
+/**
+ * Height of the bar's *content* — icon, label and their padding. The bottom
+ * safe area is added on top of this, never baked into it.
+ *
+ * The design's 76 is the whole bar on an iPhone 14 Pro frame, so it already
+ * contained a 19pt allowance for the home indicator. Treating that number as
+ * content height and adding the inset again counted the safe area twice, which
+ * is what made the bar render at 100dp. 49 is the height iOS uses for its own
+ * tab bars, so the result feels native on both platforms.
+ */
+const TAB_BAR_CONTENT_HEIGHT = 49;
 
 export default function TabsLayout() {
   const { t } = useTranslation();
-  const { colors, spacing } = useTheme();
+  const { colors, spacing, fontSize } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
@@ -22,10 +31,13 @@ export default function TabsLayout() {
           headerShown: false,
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.textSecondary,
+          tabBarIconStyle: { height: 22 },
+          tabBarLabelStyle: { fontSize: fontSize.label, marginTop: 2 },
           tabBarStyle: {
             backgroundColor: colors.surface,
             borderTopColor: colors.divider,
-            height: TAB_BAR_HEIGHT + insets.bottom,
+            height: TAB_BAR_CONTENT_HEIGHT + insets.bottom,
+            paddingTop: 6,
             paddingBottom: insets.bottom,
           },
         }}
@@ -73,7 +85,7 @@ export default function TabsLayout() {
         <Tabs.Screen name="timer" options={{ href: null }} />
       </Tabs>
 
-      <ActiveTimerMiniBar bottomOffset={TAB_BAR_HEIGHT + insets.bottom + spacing.md} />
+      <ActiveTimerMiniBar bottomOffset={TAB_BAR_CONTENT_HEIGHT + insets.bottom + spacing.md} />
     </View>
   );
 }
