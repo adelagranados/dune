@@ -1,7 +1,15 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import {
+  InputAccessoryView,
+  Keyboard,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { readLastTargetDurationMs, writeLastTargetDurationMs } from '@/data/kv/activeTimer.store';
@@ -30,6 +38,9 @@ const DURATION_OPTIONS: DurationOption[] = [
 ];
 
 const CUSTOM_KEY = 'custom';
+
+// iOS number pads have no return key, so the keyboard needs an explicit way out.
+const ACCESSORY_ID = 'sessionLengthCustomMinutes';
 
 export default function SessionLengthScreen() {
   const { projectId } = useLocalSearchParams<{ projectId: string }>();
@@ -107,7 +118,12 @@ export default function SessionLengthScreen() {
   });
 
   return (
-    <View
+    // Tapping anywhere outside the field closes the keyboard. Children with
+    // their own press handlers still win, so the pills and buttons are
+    // unaffected.
+    <Pressable
+      onPress={() => Keyboard.dismiss()}
+      accessible={false}
       style={{
         flex: 1,
         backgroundColor: colors.background,
@@ -221,6 +237,7 @@ export default function SessionLengthScreen() {
               placeholder={t('sessionLength.customPlaceholder')}
               placeholderTextColor={colors.textSecondary}
               keyboardType="number-pad"
+              inputAccessoryViewID={Platform.OS === 'ios' ? ACCESSORY_ID : undefined}
               style={{
                 flex: 1,
                 paddingVertical: spacing.md,
@@ -239,6 +256,32 @@ export default function SessionLengthScreen() {
               {t('sessionLength.minutesSuffix')}
             </Text>
           </View>
+        ) : null}
+
+        {isCustom && Platform.OS === 'ios' ? (
+          <InputAccessoryView nativeID={ACCESSORY_ID}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                backgroundColor: colors.surface,
+                paddingHorizontal: spacing.lg,
+                paddingVertical: spacing.md,
+              }}
+            >
+              <Pressable onPress={() => Keyboard.dismiss()} hitSlop={spacing.md}>
+                <Text
+                  style={{
+                    fontFamily: fontFamily.bodySemiBold,
+                    fontSize: fontSize.button,
+                    color: colors.primary,
+                  }}
+                >
+                  {t('common.done')}
+                </Text>
+              </Pressable>
+            </View>
+          </InputAccessoryView>
         ) : null}
 
         <Text
@@ -306,6 +349,6 @@ export default function SessionLengthScreen() {
           </Pressable>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }

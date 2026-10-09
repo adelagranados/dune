@@ -2,7 +2,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Project } from '@/data/db/schema';
@@ -61,6 +61,38 @@ export default function ManualEntryScreen() {
     });
     router.replace({ pathname: '/project/[id]', params: { id: selectedProjectId } });
   };
+
+  const applySelection = (selected: Date) => {
+    if (openPicker === 'date') {
+      setDay(selected);
+    } else if (openPicker === 'start') {
+      setStartTime(selected);
+    } else {
+      setEndTime(selected);
+    }
+  };
+
+  /**
+   * The picker is a modal dialog on Android but a plain inline view on iOS, so
+   * iOS needs a sheet of its own to put it in — and a Done button, since an
+   * inline picker has nothing to confirm with.
+   */
+  const renderPicker = () => (
+    <DateTimePicker
+      value={openPicker === 'date' ? day : openPicker === 'start' ? startTime : endTime}
+      mode={openPicker === 'date' ? 'date' : 'time'}
+      display={Platform.OS === 'ios' ? (openPicker === 'date' ? 'inline' : 'spinner') : 'default'}
+      onValueChange={(_event, selected) => {
+        applySelection(selected);
+        // On Android the component is the dialog, so picking closes it. On iOS
+        // it lives inside our sheet and stays until Done.
+        if (Platform.OS !== 'ios') {
+          setOpenPicker(null);
+        }
+      }}
+      onDismiss={() => setOpenPicker(null)}
+    />
+  );
 
   const formatDay = (value: Date) =>
     value.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric', year: 'numeric' });
@@ -228,23 +260,50 @@ export default function ManualEntryScreen() {
         style={{ marginTop: spacing['2xl'] }}
       />
 
-      {openPicker !== null ? (
-        <DateTimePicker
-          value={openPicker === 'date' ? day : openPicker === 'start' ? startTime : endTime}
-          mode={openPicker === 'date' ? 'date' : 'time'}
-          onValueChange={(_event, selected) => {
-            const picker = openPicker;
-            setOpenPicker(null);
-            if (picker === 'date') {
-              setDay(selected);
-            } else if (picker === 'start') {
-              setStartTime(selected);
-            } else {
-              setEndTime(selected);
-            }
-          }}
-          onDismiss={() => setOpenPicker(null)}
-        />
+      {Platform.OS === 'ios' ? (
+        <Modal
+          visible={openPicker !== null}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setOpenPicker(null)}
+        >
+          <Pressable
+            style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.35)' }}
+            onPress={() => setOpenPicker(null)}
+          />
+          <View
+            style={{
+              backgroundColor: colors.surfaceElevated,
+              borderTopLeftRadius: radius.lg,
+              borderTopRightRadius: radius.lg,
+              paddingBottom: insets.bottom + spacing.lg,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                paddingHorizontal: spacing.xl,
+                paddingVertical: spacing.md,
+              }}
+            >
+              <Pressable onPress={() => setOpenPicker(null)} hitSlop={spacing.md}>
+                <Text
+                  style={{
+                    fontFamily: fontFamily.bodySemiBold,
+                    fontSize: fontSize.button,
+                    color: colors.primary,
+                  }}
+                >
+                  {t('common.done')}
+                </Text>
+              </Pressable>
+            </View>
+            {openPicker !== null ? renderPicker() : null}
+          </View>
+        </Modal>
+      ) : openPicker !== null ? (
+        renderPicker()
       ) : null}
     </ScrollView>
   );
