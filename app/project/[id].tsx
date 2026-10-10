@@ -245,7 +245,11 @@ export default function ProjectDetailScreen() {
               key={session.id}
               label={`${formatSessionDay(session.startedAt)} · ${formatSessionDuration(session.durationMs)}`}
               swiped={swipedSessionId === session.id}
-              onSwipedChange={(swiped) => setSwipedSessionId(swiped ? session.id : null)}
+              onSwipedChange={(swiped) =>
+                setSwipedSessionId((current) =>
+                  swiped ? session.id : current === session.id ? null : current,
+                )
+              }
               onDelete={() => setSessionToDelete(session)}
               deleteLabel={t('common.delete')}
             />
