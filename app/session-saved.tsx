@@ -132,7 +132,7 @@ export default function SessionSavedScreen() {
       <View style={{ marginTop: 'auto', gap: spacing.lg }}>
         <Button
           label={t('sessionSaved.done')}
-          onPress={() => router.replace({ pathname: '/project/[id]', params: { id: projectId } })}
+          onPress={() => router.dismissTo({ pathname: '/project/[id]', params: { id: projectId } })}
         />
         <Button
           label={t('sessionSaved.addManualEntry')}

@@ -38,7 +38,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, lineHeight, radius, spacing, fontFamily, fontSize } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
@@ -51,9 +51,9 @@ export function ConfirmDialog({
       />
       <View
         style={{
-          backgroundColor: colors.surfaceElevated,
-          borderTopLeftRadius: radius.lg,
-          borderTopRightRadius: radius.lg,
+          backgroundColor: colors.sheet,
+          borderTopLeftRadius: radius.sheet,
+          borderTopRightRadius: radius.sheet,
           paddingHorizontal: spacing.xl,
           paddingTop: spacing['2xl'],
           paddingBottom: insets.bottom + spacing.xl,
@@ -62,7 +62,8 @@ export function ConfirmDialog({
         <Text
           style={{
             fontFamily: fontFamily.display,
-            fontSize: fontSize.heading3,
+            fontSize: fontSize.heading2,
+            lineHeight: lineHeight.heading2,
             color: colors.textPrimary,
           }}
         >
@@ -71,9 +72,9 @@ export function ConfirmDialog({
         <Text
           style={{
             fontFamily: fontFamily.body,
-            fontSize: fontSize.body,
+            fontSize: fontSize.secondary,
             color: colors.textSecondary,
-            marginTop: spacing.sm,
+            marginTop: spacing.lg,
           }}
         >
           {message}
@@ -85,8 +86,8 @@ export function ConfirmDialog({
           style={{
             alignItems: 'center',
             paddingVertical: spacing.lg,
-            borderRadius: radius.md,
-            backgroundColor: destructive ? colors.surface : colors.primary,
+            borderRadius: radius.xl,
+            backgroundColor: destructive ? colors.sheetAction : colors.primary,
             marginTop: spacing['2xl'],
           }}
         >
@@ -94,7 +95,7 @@ export function ConfirmDialog({
             style={{
               fontFamily: fontFamily.bodySemiBold,
               fontSize: fontSize.button,
-              color: destructive ? colors.danger : colors.onPrimary,
+              color: destructive ? colors.dangerOnSheet : colors.onPrimary,
             }}
           >
             {confirmLabel}
