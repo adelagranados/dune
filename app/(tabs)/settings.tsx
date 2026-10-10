@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { LanguagePreference, ThemePreference } from '@/data/kv/settings.store';
@@ -80,64 +80,67 @@ export default function SettingsScreen() {
         animationType="slide"
         onRequestClose={() => setLanguageSheetOpen(false)}
       >
-        <Pressable
-          style={{ flex: 1, backgroundColor: colors.scrim }}
-          onPress={() => setLanguageSheetOpen(false)}
-        />
-        <View
-          style={{
-            backgroundColor: colors.surfaceElevated,
-            borderTopLeftRadius: radius.lg,
-            borderTopRightRadius: radius.lg,
-            paddingTop: spacing.lg,
-            paddingBottom: insets.bottom + spacing.lg,
-          }}
-        >
-          <Text
+        {/* Fills the modal, so the sheet's rounded corners dim what they reveal. */}
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <Pressable
+            style={[StyleSheet.absoluteFill, { backgroundColor: colors.scrim }]}
+            onPress={() => setLanguageSheetOpen(false)}
+          />
+          <View
             style={{
-              fontFamily: fontFamily.bodySemiBold,
-              fontSize: fontSize.label,
-              color: colors.textSecondary,
-              textTransform: 'uppercase',
-              letterSpacing: 0.5,
-              paddingHorizontal: spacing.xl,
-              marginBottom: spacing.sm,
+              backgroundColor: colors.surfaceElevated,
+              borderTopLeftRadius: radius.lg,
+              borderTopRightRadius: radius.lg,
+              paddingTop: spacing.lg,
+              paddingBottom: insets.bottom + spacing.lg,
             }}
           >
-            {t('settings.language')}
-          </Text>
-          {LANGUAGE_OPTIONS.map((option) => (
-            <Pressable
-              key={option}
-              onPress={() => {
-                setLanguage(option);
-                setLanguageSheetOpen(false);
-              }}
-              accessibilityRole="button"
-              accessibilityState={{ selected: option === language }}
+            <Text
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: spacing.md,
+                fontFamily: fontFamily.bodySemiBold,
+                fontSize: fontSize.label,
+                color: colors.textSecondary,
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
                 paddingHorizontal: spacing.xl,
-                paddingVertical: spacing.lg,
+                marginBottom: spacing.sm,
               }}
             >
-              <Text
+              {t('settings.language')}
+            </Text>
+            {LANGUAGE_OPTIONS.map((option) => (
+              <Pressable
+                key={option}
+                onPress={() => {
+                  setLanguage(option);
+                  setLanguageSheetOpen(false);
+                }}
+                accessibilityRole="button"
+                accessibilityState={{ selected: option === language }}
                 style={{
-                  flex: 1,
-                  fontFamily: fontFamily.body,
-                  fontSize: fontSize.body,
-                  color: colors.textPrimary,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: spacing.md,
+                  paddingHorizontal: spacing.xl,
+                  paddingVertical: spacing.lg,
                 }}
               >
-                {t(`settings.languageOptions.${option}`)}
-              </Text>
-              {option === language ? (
-                <CheckIcon color={colors.primary} size={18} weight="regular" />
-              ) : null}
-            </Pressable>
-          ))}
+                <Text
+                  style={{
+                    flex: 1,
+                    fontFamily: fontFamily.body,
+                    fontSize: fontSize.body,
+                    color: colors.textPrimary,
+                  }}
+                >
+                  {t(`settings.languageOptions.${option}`)}
+                </Text>
+                {option === language ? (
+                  <CheckIcon color={colors.primary} size={18} weight="regular" />
+                ) : null}
+              </Pressable>
+            ))}
+          </View>
         </View>
       </Modal>
     </ScrollView>
