@@ -81,7 +81,7 @@ export default function SettingsScreen() {
         onRequestClose={() => setLanguageSheetOpen(false)}
       >
         <Pressable
-          style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.35)' }}
+          style={{ flex: 1, backgroundColor: colors.scrim }}
           onPress={() => setLanguageSheetOpen(false)}
         />
         <View

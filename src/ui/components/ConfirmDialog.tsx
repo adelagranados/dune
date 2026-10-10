@@ -44,7 +44,7 @@ export function ConfirmDialog({
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onCancel}>
       <Pressable
-        style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.45)' }}
+        style={{ flex: 1, backgroundColor: colors.scrim }}
         onPress={onCancel}
         accessibilityRole="button"
         accessibilityLabel={cancelLabel}
