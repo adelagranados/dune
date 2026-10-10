@@ -1,129 +1,103 @@
 # Colour tokens — code vs Figma
 
-The Figma Design System page is the source of truth for colour. Some tokens have
-since been added or questioned in code, because the app grew capabilities the
-palette was never asked about.
+The Figma Design System page is the source of truth for colour, and the code
+mirrors it. This file records anything the code decides on its own, and the
+measurements behind it.
 
-This file records every one of those, so the two can be brought back together
-deliberately rather than drifting.
+**Synced with the contrast pass of October 2026** (Figma frame
+`164:14 — Contrast update`). Everything below matches Figma unless marked.
 
-**Status at a glance**
+| Token             | Light     | Dark      | Source                |
+| ----------------- | --------- | --------- | --------------------- |
+| `background`      | `#FCFAF7` | `#1E1A18` | Figma                 |
+| `surface`         | `#E7DCD1` | `#3B322C` | Figma — contrast pass |
+| `surfaceElevated` | `#FCFAF7` | `#4A3D36` | Figma — contrast pass |
+| `textPrimary`     | `#29231F` | `#FAF4EC` | Figma                 |
+| `textSecondary`   | `#665A52` | `#B9ADA5` | Figma — contrast pass |
+| `textPlaceholder` | `#8D8077` | `#897C73` | **code**              |
+| `divider`         | `#C9B9AC` | `#5B4D45` | Figma — contrast pass |
+| `primary`         | `#C86F52` | `#D98568` | Figma                 |
+| `primaryText`     | `#954A34` | `#D98568` | Figma — contrast pass |
+| `onPrimary`       | `#1E1A18` | `#1E1A18` | Figma — contrast pass |
+| `danger`          | `#A8372A` | `#EE8271` | **code**              |
 
-| Token             | Light     | Dark      | State                              |
-| ----------------- | --------- | --------- | ---------------------------------- |
-| `textPlaceholder` | `#9A8E86` | `#776B64` | **added in code** — not in Figma   |
-| `danger`          | `#A8372A` | `#E8705C` | **added in code** — not in Figma   |
-| `surface`         | `#F4F1ED` | `#29231F` | **change agreed, value undecided** |
-| `surfaceElevated` | `#F4F1ED` | `#342D29` | **light value is a placeholder**   |
+## What the contrast pass fixed
 
-Everything not listed here matches the Design System page exactly.
+|                                     | before | after                      |
+| ----------------------------------- | ------ | -------------------------- |
+| `surface` vs `background`, light    | 1.08:1 | **1.30:1**                 |
+| `surface` vs `background`, dark     | 1.11:1 | **1.38:1**                 |
+| `divider` vs `background`, light    | 1.22:1 | **1.83:1**                 |
+| `divider` vs `background`, dark     | 1.59:1 | **2.13:1**                 |
+| primary as text on light background | 3.44:1 | **6.10:1** (`primaryText`) |
+| `onPrimary` on `primary`, light     | 3.28:1 | **4.81:1**                 |
 
----
+**`surfaceElevated` in light is now `#FCFAF7` — the same value as `background`.**
+That is deliberate and matches what the Theme Selector already implied: in light
+the elevated surface is the page colour, while `surface` sits below it. Now that
+`surface` has moved away from `#FCFAF7` there is real room between the two, and
+`SegmentedControl` no longer needs to branch on `colorScheme` for it.
 
-## `textPlaceholder` — added
+## Still not satisfied
 
-Hint text inside an input. Added for [#43](https://github.com/adelagranados/dune/issues/43): both inputs drew placeholders in
-`textSecondary`, the same colour as genuine content, so a tester could not tell
-whether a field already had a value. "Coding" as a hint and "Coding" as an
-entered value rendered identically.
+`surface` vs `background` is 1.30:1 (light) and 1.38:1 (dark). WCAG 1.4.11 asks
+**3:1** for the boundary of a UI component. These values are a clear improvement
+and were chosen to keep the flat, warm look, but they do not meet that bar — the
+card edge is still carried by tone rather than by contrast. Noted in the Figma
+handoff too. Worth validating on a phone in direct sunlight before calling it
+settled.
 
-Chosen by measuring against the input surface rather than by eye:
+## Decided in code, not in Figma
 
-|                    | placeholder        | real text          | ratio between them |
-| ------------------ | ------------------ | ------------------ | ------------------ |
-| Light on `#F4F1ED` | `#9A8E86` — 2.83:1 | `#6D625B` — 5.26:1 | 1.9× dimmer        |
-| Dark on `#29231F`  | `#776B64` — 3.01:1 | `#B9ADA5` — 7.08:1 | 2.4× dimmer        |
+### `primaryText` usage
 
-Verified in rendered pixels on a device, not just in the stylesheet.
+Figma defines the token; which elements take it was decided here. It is applied
+to primary used **as text** — back links, "+ New project", the mini bar's
+pause control, the sheet confirmations, and the active tab (whose tint colours
+icon and label together, and the label is 11pt).
 
-**For Figma:** add a `Placeholder / Light` and `Placeholder / Dark` swatch.
+Fills keep `primary`: buttons, selected chips and pills, the progress bar, and
+the canonical hourglass.
 
----
+### `textPlaceholder`
 
-## `danger` — added
+Not in Figma. Added because both inputs drew hints in `textSecondary` — the same
+colour as real content — so an empty field looked like a filled one.
 
-Destructive actions. Added for [#58](https://github.com/adelagranados/dune/issues/58): deleting sessions and projects only became
-possible after the palette was drawn, so there was no colour for it.
+Recalibrated during this pass: it is measured against the _input surface_, so
+darkening `surface` moved it too. It fell to 2.36:1 and was lifted back to
+**2.84:1** light and **3.09:1** dark, against real text at 4.94:1 and 5.71:1.
+The gap is the point, not the absolute number.
 
-The constraint is that it must not read as the brand. Terracotta is already a
-warm red, so a destructive action tinted with it looks like any other Dune
-button. Hue is what separates them:
+### `danger`
 
-|                              | hue      | contrast on surface |
-| ---------------------------- | -------- | ------------------- |
-| `primary` light `#C86F52`    | 14.7°    | 3.19:1              |
-| **`danger` light `#A8372A`** | **6.2°** | 5.75:1              |
-| `primary` dark `#D98568`     | 15.4°    | 5.54:1              |
-| **`danger` dark `#E8705C`**  | **8.6°** | 5.10:1              |
+Not in Figma. Destructive actions arrived after the palette was drawn.
 
-Both pass WCAG AA for normal text on the surface they sit on.
+Terracotta is already a warm red, so a delete tinted with it reads as an ordinary
+Dune button. Hue separates them: `danger` sits at 6–9° against the primary's
+14–15°.
 
-Used as **text on `surface`**, not as a filled button — a destructive action
+The dark value was lifted from `#E8705C` to `#EE8271` in this pass: lightening
+`surface` had dropped it to 4.11:1, under AA. It is now **4.81:1**, with light at
+**4.79:1**.
+
+Used as text on a surface, never as a filled button — a destructive action
 should not be the most inviting thing on screen.
 
-**For Figma:** add `Danger / Light` and `Danger / Dark`. Open question: whether
-the destructive action deserves its own colour at all, or whether the wording
-should carry it. That decision belongs to the design, not to the code.
+## Hardcoded in code
 
----
-
-## `surface` — change agreed, value still open
-
-[#54](https://github.com/adelagranados/dune/issues/54): testers reported that cards barely separate from the background. Measured:
-
-```
-light   background #FCFAF7  vs  surface #F4F1ED   1.081:1
-dark    background #1E1A18  vs  surface #29231F   1.114:1
-```
-
-1.08:1 is effectively no boundary — on a phone at an angle, or in sunlight, the
-card edge disappears. Light is the worse of the two, which matches the report,
-but neither is carrying real separation.
-
-**Decided:** move the surfaces further apart, rather than adding a border or a
-shadow. That keeps the flat visual language the app uses everywhere.
-
-**Still open:** the new value. It changes every screen, since `colors.surface`
-is what every card uses, so it should be picked in Figma and mirrored here —
-not the other way round.
-
----
-
-## `surfaceElevated` light — placeholder value
-
-The Design System page defines `Elevated / Dark` (`#342D29`) but has no light
-counterpart, so the code currently reuses `surface` for light:
+`PROJECT_COLORS` in `app/project/new.tsx` lists the swatches a project can be
+tagged with:
 
 ```ts
-// No distinct "Elevated/Light" swatch exists in the Figma Design System page
-surfaceElevated: '#F4F1ED',
+['#C86F52', '#8175C7', '#A8C7B1', '#E5A47F', '#6D625B'];
 ```
 
-Building the Settings screen surfaced what the light value should probably be.
-The `Theme Selector` component draws its selected segment one step **lighter**
-than its track:
+The first four are the Figma accent swatches (Terracotta, Dusk, Sage, Sunset).
+**The fifth is the pre-contrast-pass `textSecondary`**, which no longer exists in
+the palette — it was borrowed as a neutral. It needs a real swatch of its own, or
+to be dropped.
 
-|       | track               | selected segment                       |
-| ----- | ------------------- | -------------------------------------- |
-| Light | `#F4F1ED` (surface) | `#FCFAF7` — which is `background`      |
-| Dark  | `#29231F` (surface) | `#342D29` — which is `surfaceElevated` |
-
-So in light the "elevated" surface is the page background, while in dark it is a
-distinct colour. The component reads `colorScheme` and picks, with a comment, so
-the inconsistency is visible rather than silently encoded.
-
-**For Figma:** decide whether light gets a real `Elevated / Light` swatch. If it
-does, this becomes a normal token and `SegmentedControl` stops branching.
-
-Note this interacts with the `surface` decision above: moving light's `surface`
-away from `#FCFAF7` also changes how much room there is for an elevated value
-between them.
-
----
-
-## Not a palette change
-
-`notification_icon_color` in the Android native config is `#C86F52` — the
-existing `primary`, not a new colour. It is written as a literal in `app.json`
-because config plugins run outside the React tree and cannot read the theme.
-If `primary` ever changes, that literal has to change with it.
+`notification_icon_color` in `app.json` is `#C86F52` — `primary`, written as a
+literal because config plugins run outside the React tree and cannot read the
+theme. If `primary` changes, that literal has to change with it.

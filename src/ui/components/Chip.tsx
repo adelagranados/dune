@@ -1,5 +1,6 @@
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
+import { CheckIcon } from '@/ui/icons';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
 type ChipProps = {
@@ -14,8 +15,14 @@ export function Chip({ label, selected, onPress }: ChipProps) {
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
       style={{
-        paddingHorizontal: spacing.lg,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.xs,
+        paddingLeft: selected ? spacing.md : spacing.lg,
+        paddingRight: spacing.lg,
         paddingVertical: spacing.sm,
         borderRadius: radius.full,
         backgroundColor: selected ? colors.primary : colors.surface,
@@ -23,9 +30,20 @@ export function Chip({ label, selected, onPress }: ChipProps) {
         borderColor: colors.divider,
       }}
     >
+      {/*
+        The fill alone carries selection at 2.66:1 in light, under the 3:1 a
+        state indicator needs — and it says nothing to anyone who cannot
+        separate terracotta from sand. The check is the actual indicator; the
+        fill is reinforcement.
+      */}
+      {selected ? (
+        <View accessible={false}>
+          <CheckIcon color={colors.onPrimary} size={14} weight="bold" />
+        </View>
+      ) : null}
       <Text
         style={{
-          fontFamily: fontFamily.bodyMedium,
+          fontFamily: selected ? fontFamily.bodySemiBold : fontFamily.bodyMedium,
           fontSize: fontSize.body,
           color: selected ? colors.onPrimary : colors.textPrimary,
         }}

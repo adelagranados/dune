@@ -121,7 +121,7 @@ export default function SessionSavedScreen() {
           style={{
             fontFamily: fontFamily.body,
             fontSize: fontSize.secondary,
-            color: colors.primary,
+            color: colors.primaryText,
             marginTop: spacing.lg,
           }}
         >

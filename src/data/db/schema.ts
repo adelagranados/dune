@@ -1,6 +1,16 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 export type ProjectStatus = 'active' | 'completed';
+
+/**
+ * Projects store the *name* of their colour, not a hex.
+ *
+ * `project/ochre` is defined per theme (#84783D light, #A69A62 dark), so a
+ * stored hex would be wrong in one of the two. Keeping the name lets the
+ * palette own the values, which also means a swatch can be retuned later —
+ * Sage and Sunset are flagged as weak in light mode — without touching data.
+ */
+export type ProjectColor = 'terracotta' | 'dusk' | 'sage' | 'sunset' | 'ochre';
 export type SessionSource = 'timer' | 'manual';
 
 export const projects = sqliteTable('projects', {
@@ -8,7 +18,7 @@ export const projects = sqliteTable('projects', {
   name: text('name').notNull(),
   // Free-text tag chosen or typed by the user — not a fixed enum (see architecture Q&A).
   category: text('category'),
-  color: text('color').notNull(),
+  color: text('color').notNull().$type<ProjectColor>(),
   estimatedTimeMs: integer('estimated_time_ms'),
   status: text('status').notNull().$type<ProjectStatus>(),
   createdAt: integer('created_at').notNull(),

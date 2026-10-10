@@ -1,5 +1,7 @@
 import { Pressable, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
+import { CheckIcon } from '@/ui/icons';
+
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
 type SegmentedControlOption<T extends string> = {
@@ -20,12 +22,11 @@ export function SegmentedControl<T extends string>({
   onChange,
   style,
 }: SegmentedControlProps<T>) {
-  const { colors, colorScheme, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
 
-  // The selected segment sits one step lighter than the track it rides on. In
-  // light that lighter surface is the page background; in dark it is the
-  // elevated surface.
-  const selectedBackground = colorScheme === 'dark' ? colors.surfaceElevated : colors.background;
+  // The selected segment sits one step lighter than its track, which is what
+  // `surfaceElevated` means in both themes now that light has a real value for
+  // it. This used to branch on colorScheme because light reused `surface`.
 
   return (
     <View
@@ -49,18 +50,32 @@ export function SegmentedControl<T extends string>({
             accessibilityState={{ selected }}
             style={{
               flex: 1,
+              flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
+              gap: spacing.xs,
               paddingVertical: spacing.md,
               borderRadius: radius.lg,
-              backgroundColor: selected ? selectedBackground : 'transparent',
+              backgroundColor: selected ? colors.surfaceElevated : 'transparent',
             }}
           >
+            {/*
+              The selected pill sits at 1.30:1 against its track in light and
+              1.20:1 in dark — far under the 3:1 a state indicator needs, and
+              the design system says this separation is decorative grouping
+              only. The check is what actually marks the state; the lighter
+              fill and the heavier label reinforce it.
+            */}
+            {selected ? (
+              <View accessible={false}>
+                <CheckIcon color={colors.primaryText} size={13} weight="bold" />
+              </View>
+            ) : null}
             <Text
               style={{
                 fontFamily: selected ? fontFamily.bodySemiBold : fontFamily.bodyMedium,
                 fontSize: fontSize.secondary,
-                color: selected ? colors.textPrimary : colors.textSecondary,
+                color: selected ? colors.primaryText : colors.textSecondary,
               }}
             >
               {option.label}

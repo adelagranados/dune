@@ -1,3 +1,5 @@
+import type { ProjectColor } from '@/data/db/schema';
+
 export const spacing = {
   xs: 4,
   sm: 8,
@@ -52,10 +54,20 @@ export type ColorTokens = {
    * Hint text inside an input. Deliberately dimmer than `textSecondary`: a
    * placeholder drawn in the same colour as real content is indistinguishable
    * from an entered value, which is a question of legibility rather than taste.
+   *
+   * Its contrast is **below AA for normal text, as a known exception** recorded
+   * in the design system. Fields keep a persistent label, and nothing essential
+   * may be communicated by a placeholder alone.
    */
   textPlaceholder: string;
   divider: string;
   primary: string;
+  /**
+   * Primary used as *text*. The brand terracotta only reaches 3.44:1 on the
+   * light background, under the 4.5:1 AA needs for normal text, so small
+   * accent text and links use this darker variant while fills keep `primary`.
+   */
+  primaryText: string;
   /** Text/icons rendered on top of `primary` — not simply white. */
   onPrimary: string;
   /**
@@ -69,33 +81,35 @@ export type ColorTokens = {
 
 export const lightColors: ColorTokens = {
   background: '#FCFAF7',
-  surface: '#F4F1ED',
-  // No distinct "Elevated/Light" swatch exists in the Figma Design System page
-  // (only Dark defines one) — light mode leans on shadow for elevation, so it
-  // reuses `surface` until a real elevated surface shows up in a design pass.
-  surfaceElevated: '#F4F1ED',
+  surface: '#E7DCD1',
+  surfaceElevated: '#FCFAF7',
   textPrimary: '#29231F',
-  textSecondary: '#6D625B',
-  // 2.83:1 against the input surface, where real text sits at 5.26:1.
-  textPlaceholder: '#9A8E86',
-  divider: '#E9E3DC',
+  textSecondary: '#665A52',
+  // Recalibrated when `surface` darkened: it is tuned against the input
+  // surface, not against the page, so moving one moves the other.
+  textPlaceholder: '#8D8077',
+  divider: '#C9B9AC',
   primary: '#C86F52',
-  onPrimary: '#FAF4EC',
+  primaryText: '#954A34',
+  // Ink rather than cream: cream on terracotta is only 3.28:1, under AA.
+  onPrimary: '#1E1A18',
   danger: '#A8372A',
 };
 
 export const darkColors: ColorTokens = {
   background: '#1E1A18',
-  surface: '#29231F',
-  surfaceElevated: '#342D29',
+  surface: '#3B322C',
+  surfaceElevated: '#4A3D36',
   textPrimary: '#FAF4EC',
   textSecondary: '#B9ADA5',
-  // 3.01:1 against the input surface, where real text sits at 7.08:1.
-  textPlaceholder: '#776B64',
-  divider: '#453B36',
+  textPlaceholder: '#897C73',
+  divider: '#5B4D45',
   primary: '#D98568',
+  // Dark needs no darker variant: the brand colour already clears AA there.
+  primaryText: '#D98568',
   onPrimary: '#1E1A18',
-  danger: '#E8705C',
+  // Lifted when `surface` lightened, which had pushed this under AA.
+  danger: '#EE8271',
 };
 
 /**
@@ -112,3 +126,30 @@ export const lineHeight = {
   display: 52,
   displayLarge: 62,
 } as const;
+
+/**
+ * The swatches a project can be tagged with, resolved per theme.
+ *
+ * Only `ochre` and `terracotta` currently differ between themes; the others
+ * carry one value because that is all the design defines. The shape allows a
+ * per-theme value for any of them, which is what Sage and Sunset will need —
+ * at 1.76:1 and 2.03:1 they are weak as a 9px mark on the light background.
+ */
+export type ProjectColorTokens = Record<ProjectColor, string>;
+
+export const projectColors: Record<'light' | 'dark', ProjectColorTokens> = {
+  light: {
+    terracotta: '#C86F52',
+    dusk: '#8175C7',
+    sage: '#A8C7B1',
+    sunset: '#E5A47F',
+    ochre: '#84783D',
+  },
+  dark: {
+    terracotta: '#D98568',
+    dusk: '#8175C7',
+    sage: '#A8C7B1',
+    sunset: '#E5A47F',
+    ochre: '#A69A62',
+  },
+};

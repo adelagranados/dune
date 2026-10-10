@@ -25,7 +25,8 @@ function combine(day: Date, time: Date): number {
 export default function ManualEntryScreen() {
   const { projectId } = useLocalSearchParams<{ projectId: string }>();
   const { t, i18n } = useTranslation();
-  const { colors, colorScheme, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
+  const { colors, projectColors, colorScheme, radius, spacing, fontFamily, fontSize, lineHeight } =
+    useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -184,7 +185,12 @@ export default function ManualEntryScreen() {
               }}
             >
               <View
-                style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: project.color }}
+                style={{
+                  width: 9,
+                  height: 9,
+                  borderRadius: 5,
+                  backgroundColor: projectColors[project.color],
+                }}
               />
               <Text
                 style={{
@@ -304,7 +310,7 @@ export default function ManualEntryScreen() {
                   style={{
                     fontFamily: fontFamily.bodySemiBold,
                     fontSize: fontSize.button,
-                    color: colors.primary,
+                    color: colors.primaryText,
                   }}
                 >
                   {t('common.done')}

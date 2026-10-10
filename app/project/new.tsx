@@ -4,18 +4,19 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import type { ProjectColor } from '@/data/db/schema';
 import { createProject, getDistinctCategories } from '@/data/repositories/projectRepository';
 import { Button } from '@/ui/components/Button';
 import { Chip } from '@/ui/components/Chip';
 import { TextField } from '@/ui/components/TextField';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
-const PROJECT_COLORS = ['#C86F52', '#8175C7', '#A8C7B1', '#E5A47F', '#6D625B'];
+const PROJECT_COLORS: ProjectColor[] = ['terracotta', 'dusk', 'sage', 'sunset', 'ochre'];
 const DEFAULT_CATEGORY_SUGGESTIONS = ['Coding', 'Creative', 'Learning'];
 
 export default function CreateProjectScreen() {
   const { t } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
+  const { colors, projectColors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -70,7 +71,11 @@ export default function CreateProjectScreen() {
     >
       <Pressable onPress={() => router.back()}>
         <Text
-          style={{ fontFamily: fontFamily.body, fontSize: fontSize.body, color: colors.primary }}
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.body,
+            color: colors.primaryText,
+          }}
         >
           {'‹ ' + t('tabs.home')}
         </Text>
@@ -155,7 +160,7 @@ export default function CreateProjectScreen() {
                 width: 32,
                 height: 32,
                 borderRadius: radius.sm,
-                backgroundColor: swatch,
+                backgroundColor: projectColors[swatch],
                 borderWidth: color === swatch ? 2 : 0,
                 borderColor: colors.textPrimary,
               }}

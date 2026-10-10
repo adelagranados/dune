@@ -9,9 +9,11 @@ import {
   fontSize,
   lightColors,
   lineHeight,
+  projectColors,
   radius,
   spacing,
   type ColorTokens,
+  type ProjectColorTokens,
 } from './tokens';
 
 type Theme = {
@@ -22,6 +24,8 @@ type Theme = {
   fontSize: typeof fontSize;
   fontFamily: typeof fontFamily;
   lineHeight: typeof lineHeight;
+  /** Project swatches already resolved for the active theme. */
+  projectColors: ProjectColorTokens;
 };
 
 const ThemeContext = createContext<Theme | null>(null);
@@ -42,6 +46,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       fontSize,
       fontFamily,
       lineHeight,
+      projectColors: colorScheme === 'dark' ? projectColors.dark : projectColors.light,
     }),
     [colorScheme],
   );
