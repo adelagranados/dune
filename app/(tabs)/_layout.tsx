@@ -34,7 +34,9 @@ export default function TabsLayout() {
           tabBarIconStyle: { height: 22 },
           tabBarLabelStyle: { fontSize: fontSize.label, marginTop: 2 },
           tabBarStyle: {
-            backgroundColor: colors.surface,
+            // The page colour, not a surface. The design draws the nav flush
+            // with the background and separates it with the divider alone.
+            backgroundColor: colors.background,
             borderTopColor: colors.divider,
             height: TAB_BAR_CONTENT_HEIGHT + insets.bottom,
             paddingTop: 6,

@@ -60,7 +60,7 @@ export default function ManualEntryScreen() {
       durationMs,
       source: 'manual',
     });
-    router.replace({ pathname: '/project/[id]', params: { id: selectedProjectId } });
+    router.dismissTo({ pathname: '/project/[id]', params: { id: selectedProjectId } });
   };
 
   const applySelection = (selected: Date) => {

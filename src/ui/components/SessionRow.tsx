@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import ReanimatedSwipeable, {
   type SwipeableMethods,
@@ -11,6 +11,9 @@ type SessionRowProps = {
   /** Date and duration as one line — "Oct 8 · 1h 24m". */
   label: string;
   deleteLabel: string;
+  /** True while this is the row the swipe belongs to. */
+  swiped: boolean;
+  onSwipedChange: (swiped: boolean) => void;
   onDelete: () => void;
 };
 
@@ -21,19 +24,34 @@ type SessionRowProps = {
  * background. The highlight belongs to the gesture, not to the row — it is
  * never a selected state that outlives the swipe, which is why the row closes
  * itself as soon as the confirmation has been asked for.
+ *
+ * Which row is swiped is owned by the list, so opening one closes any other.
+ * Two rows showing a delete action at once would read as a selection.
  */
-export function SessionRow({ label, deleteLabel, onDelete }: SessionRowProps) {
+export function SessionRow({
+  label,
+  deleteLabel,
+  swiped,
+  onSwipedChange,
+  onDelete,
+}: SessionRowProps) {
   const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
   const swipeable = useRef<SwipeableMethods>(null);
-  const [swiped, setSwiped] = useState(false);
+
+  // Another row took the swipe, so this one gives it up.
+  useEffect(() => {
+    if (!swiped) {
+      swipeable.current?.close();
+    }
+  }, [swiped]);
 
   return (
     <ReanimatedSwipeable
       ref={swipeable}
       friction={2}
       rightThreshold={40}
-      onSwipeableWillOpen={() => setSwiped(true)}
-      onSwipeableWillClose={() => setSwiped(false)}
+      onSwipeableWillOpen={() => onSwipedChange(true)}
+      onSwipeableWillClose={() => onSwipedChange(false)}
       containerStyle={{ marginBottom: spacing.xs }}
       renderRightActions={() => (
         <View style={{ justifyContent: 'center', paddingLeft: spacing.sm }}>

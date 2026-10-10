@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatDuration, formatTimerClock } from './time';
+import { formatDuration, formatSessionDuration, formatTimerClock } from './time';
 
 const SECOND = 1_000;
 const MINUTE = 60_000;
@@ -40,5 +40,32 @@ describe('formatTimerClock', () => {
 
   it('never renders a negative clock', () => {
     expect(formatTimerClock(-5_000)).toBe('00:00:00');
+  });
+});
+
+describe('formatSessionDuration', () => {
+  it('shows seconds for a session shorter than a minute', () => {
+    // formatDuration would call this 0m, next to a total that moved.
+    expect(formatSessionDuration(45 * SECOND)).toBe('45s');
+    expect(formatSessionDuration(1)).toBe('0s');
+    expect(formatSessionDuration(59_999)).toBe('59s');
+  });
+
+  it('pairs minutes with seconds below an hour', () => {
+    expect(formatSessionDuration(2 * MINUTE + 30 * SECOND)).toBe('2m 30s');
+    expect(formatSessionDuration(MINUTE + 3 * SECOND)).toBe('1m 3s');
+  });
+
+  it('drops seconds when there are none to show', () => {
+    expect(formatSessionDuration(2 * MINUTE)).toBe('2m');
+    expect(formatSessionDuration(HOUR)).toBe('1h');
+  });
+
+  it('drops seconds past an hour, where they are noise', () => {
+    expect(formatSessionDuration(HOUR + 24 * MINUTE + 17 * SECOND)).toBe('1h 24m');
+  });
+
+  it('never goes negative', () => {
+    expect(formatSessionDuration(-5000)).toBe('0s');
   });
 });

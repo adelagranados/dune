@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Project, Session } from '@/data/db/schema';
 import { deleteProject, getProjectById } from '@/data/repositories/projectRepository';
 import { deleteSession, listSessionsByProject } from '@/data/repositories/sessionRepository';
-import { formatDuration, isSameDay } from '@/lib/time';
+import { formatDuration, formatSessionDuration, isSameDay } from '@/lib/time';
 import { useActiveTimerStore } from '@/state/useActiveTimerStore';
 import { Button } from '@/ui/components/Button';
 import { ConfirmDialog } from '@/ui/components/ConfirmDialog';
@@ -25,6 +25,7 @@ export default function ProjectDetailScreen() {
   const [sessions, setSessions] = useState<Session[] | null>(null);
   const [loadedAt, setLoadedAt] = useState(0);
   const [sessionToDelete, setSessionToDelete] = useState<Session | null>(null);
+  const [swipedSessionId, setSwipedSessionId] = useState<string | null>(null);
   const [projectDeleteOpen, setProjectDeleteOpen] = useState(false);
   const activeTimer = useActiveTimerStore((state) => state.timer);
 
@@ -242,7 +243,9 @@ export default function ProjectDetailScreen() {
           {sessions.map((session) => (
             <SessionRow
               key={session.id}
-              label={`${formatSessionDay(session.startedAt)} · ${formatDuration(session.durationMs)}`}
+              label={`${formatSessionDay(session.startedAt)} · ${formatSessionDuration(session.durationMs)}`}
+              swiped={swipedSessionId === session.id}
+              onSwipedChange={(swiped) => setSwipedSessionId(swiped ? session.id : null)}
               onDelete={() => setSessionToDelete(session)}
               deleteLabel={t('common.delete')}
             />
