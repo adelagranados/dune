@@ -15,7 +15,7 @@ import { useTheme } from '@/ui/theme/ThemeProvider';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize } = useTheme();
+  const { colors, projectColors, radius, spacing, fontFamily, fontSize } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [projects, setProjects] = useState<ProjectWithTotal[] | null>(null);
@@ -148,7 +148,7 @@ export default function HomeScreen() {
                     width: 9,
                     height: 9,
                     borderRadius: 5,
-                    backgroundColor: item.project.color,
+                    backgroundColor: projectColors[item.project.color],
                   }}
                 />
                 <Text

@@ -1,13 +1,13 @@
 import { desc, eq, sql } from 'drizzle-orm';
 
 import { db } from '@/data/db/client';
-import { projects, sessions, type Project } from '@/data/db/schema';
+import { projects, sessions, type Project, type ProjectColor } from '@/data/db/schema';
 import { generateId } from '@/lib/uuid';
 
 export type CreateProjectInput = {
   name: string;
   category: string | null;
-  color: string;
+  color: ProjectColor;
   estimatedTimeMs: number | null;
 };
 

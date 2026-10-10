@@ -1,3 +1,5 @@
+import type { ProjectColor } from '@/data/db/schema';
+
 export const spacing = {
   xs: 4,
   sm: 8,
@@ -52,6 +54,10 @@ export type ColorTokens = {
    * Hint text inside an input. Deliberately dimmer than `textSecondary`: a
    * placeholder drawn in the same colour as real content is indistinguishable
    * from an entered value, which is a question of legibility rather than taste.
+   *
+   * Its contrast is **below AA for normal text, as a known exception** recorded
+   * in the design system. Fields keep a persistent label, and nothing essential
+   * may be communicated by a placeholder alone.
    */
   textPlaceholder: string;
   divider: string;
@@ -120,3 +126,30 @@ export const lineHeight = {
   display: 52,
   displayLarge: 62,
 } as const;
+
+/**
+ * The swatches a project can be tagged with, resolved per theme.
+ *
+ * Only `ochre` and `terracotta` currently differ between themes; the others
+ * carry one value because that is all the design defines. The shape allows a
+ * per-theme value for any of them, which is what Sage and Sunset will need —
+ * at 1.76:1 and 2.03:1 they are weak as a 9px mark on the light background.
+ */
+export type ProjectColorTokens = Record<ProjectColor, string>;
+
+export const projectColors: Record<'light' | 'dark', ProjectColorTokens> = {
+  light: {
+    terracotta: '#C86F52',
+    dusk: '#8175C7',
+    sage: '#A8C7B1',
+    sunset: '#E5A47F',
+    ochre: '#84783D',
+  },
+  dark: {
+    terracotta: '#D98568',
+    dusk: '#8175C7',
+    sage: '#A8C7B1',
+    sunset: '#E5A47F',
+    ochre: '#A69A62',
+  },
+};

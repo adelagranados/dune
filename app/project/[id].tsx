@@ -17,7 +17,7 @@ import { useTheme } from '@/ui/theme/ThemeProvider';
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t, i18n } = useTranslation();
-  const { colors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
+  const { colors, projectColors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -208,7 +208,9 @@ export default function ProjectDetailScreen() {
               marginTop: spacing.lg,
             }}
           >
-            <View style={{ flex: estimateProgress, backgroundColor: project.color }} />
+            <View
+              style={{ flex: estimateProgress, backgroundColor: projectColors[project.color] }}
+            />
             <View style={{ flex: 1 - estimateProgress }} />
           </View>
         ) : null}
@@ -275,7 +277,12 @@ export default function ProjectDetailScreen() {
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
                 <View
-                  style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: project.color }}
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    backgroundColor: projectColors[project.color],
+                  }}
                 />
                 <Text
                   style={{
