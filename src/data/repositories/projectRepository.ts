@@ -27,6 +27,21 @@ export async function createProject(input: CreateProjectInput): Promise<Project>
   return project;
 }
 
+export type UpdateProjectInput = {
+  name: string;
+  category: string | null;
+  color: ProjectColor;
+  estimatedTimeMs: number | null;
+};
+
+/**
+ * Edits a project's details. Sessions are untouched: the time already recorded
+ * against a project does not belong to its name or its colour.
+ */
+export async function updateProject(id: string, input: UpdateProjectInput): Promise<void> {
+  await db.update(projects).set(input).where(eq(projects.id, id));
+}
+
 export async function getProjectById(id: string): Promise<Project | null> {
   const rows = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
   return rows[0] ?? null;

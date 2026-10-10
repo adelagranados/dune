@@ -2,7 +2,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Project } from '@/data/db/schema';
@@ -285,40 +285,43 @@ export default function ManualEntryScreen() {
           animationType="slide"
           onRequestClose={() => setOpenPicker(null)}
         >
-          <Pressable
-            style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.35)' }}
-            onPress={() => setOpenPicker(null)}
-          />
-          <View
-            style={{
-              backgroundColor: colors.surfaceElevated,
-              borderTopLeftRadius: radius.lg,
-              borderTopRightRadius: radius.lg,
-              paddingBottom: insets.bottom + spacing.lg,
-            }}
-          >
+          {/* Fills the modal, so the sheet's rounded corners dim what they reveal. */}
+          <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+            <Pressable
+              style={[StyleSheet.absoluteFill, { backgroundColor: colors.scrim }]}
+              onPress={() => setOpenPicker(null)}
+            />
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-                paddingHorizontal: spacing.xl,
-                paddingVertical: spacing.md,
+                backgroundColor: colors.surfaceElevated,
+                borderTopLeftRadius: radius.lg,
+                borderTopRightRadius: radius.lg,
+                paddingBottom: insets.bottom + spacing.lg,
               }}
             >
-              <Pressable onPress={() => setOpenPicker(null)} hitSlop={spacing.md}>
-                <Text
-                  style={{
-                    fontFamily: fontFamily.bodySemiBold,
-                    fontSize: fontSize.button,
-                    color: colors.primaryText,
-                  }}
-                >
-                  {t('common.done')}
-                </Text>
-              </Pressable>
-            </View>
-            <View style={{ alignItems: 'center', paddingHorizontal: spacing.lg }}>
-              {openPicker !== null ? renderPicker() : null}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                  paddingHorizontal: spacing.xl,
+                  paddingVertical: spacing.md,
+                }}
+              >
+                <Pressable onPress={() => setOpenPicker(null)} hitSlop={spacing.md}>
+                  <Text
+                    style={{
+                      fontFamily: fontFamily.bodySemiBold,
+                      fontSize: fontSize.button,
+                      color: colors.primaryText,
+                    }}
+                  >
+                    {t('common.done')}
+                  </Text>
+                </Pressable>
+              </View>
+              <View style={{ alignItems: 'center', paddingHorizontal: spacing.lg }}>
+                {openPicker !== null ? renderPicker() : null}
+              </View>
             </View>
           </View>
         </Modal>

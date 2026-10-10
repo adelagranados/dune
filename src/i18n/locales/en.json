@@ -51,7 +51,9 @@
     "deleteProjectTitle": "Delete project?",
     "deleteProjectMessage_one": "{{name}} and its {{count}} session will be removed. This cannot be undone.",
     "deleteProjectMessage_other": "{{name}} and its {{count}} sessions will be removed. This cannot be undone.",
-    "deleteProjectMessageEmpty": "{{name}} will be removed. This cannot be undone."
+    "deleteProjectMessageEmpty": "{{name}} will be removed. This cannot be undone.",
+    "actions": "Project actions",
+    "editProject": "Edit project"
   },
   "sessionLength": {
     "title": "Set a time goal",
@@ -138,5 +140,10 @@
       "en": "English",
       "es": "Español"
     }
+  },
+  "editProject": {
+    "title": "Edit project",
+    "subtitle": "Update your project details",
+    "submit": "Save changes"
   }
 }

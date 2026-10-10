@@ -95,6 +95,12 @@ export type ColorTokens = {
   dangerOnSheet: string;
   /** The swipe-to-delete affordance revealed behind a session row. */
   swipeAction: string;
+  /**
+   * The dim behind a modal sheet. Black at 63% in both themes, from the
+   * design's overlay node — at a lighter dim, bright content directly behind
+   * the sheet's top edge competes with its rounded corner.
+   */
+  scrim: string;
 };
 
 export const lightColors: ColorTokens = {
@@ -116,6 +122,7 @@ export const lightColors: ColorTokens = {
   sheetAction: '#C9B9AC',
   dangerOnSheet: '#B75D52',
   swipeAction: '#EFE0D9',
+  scrim: 'rgba(0, 0, 0, 0.63)',
 };
 
 export const darkColors: ColorTokens = {
@@ -136,6 +143,7 @@ export const darkColors: ColorTokens = {
   sheetAction: '#3B322C',
   dangerOnSheet: '#EB7567',
   swipeAction: '#59403A',
+  scrim: 'rgba(0, 0, 0, 0.63)',
 };
 
 /**

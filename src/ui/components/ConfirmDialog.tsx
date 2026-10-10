@@ -1,4 +1,4 @@
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/ui/theme/ThemeProvider';
@@ -43,80 +43,88 @@ export function ConfirmDialog({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onCancel}>
-      <Pressable
-        style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.45)' }}
-        onPress={onCancel}
-        accessibilityRole="button"
-        accessibilityLabel={cancelLabel}
-      />
-      <View
-        style={{
-          backgroundColor: colors.sheet,
-          borderTopLeftRadius: radius.sheet,
-          borderTopRightRadius: radius.sheet,
-          paddingHorizontal: spacing.xl,
-          paddingTop: spacing['2xl'],
-          paddingBottom: insets.bottom + spacing.xl,
-        }}
-      >
-        <Text
-          style={{
-            fontFamily: fontFamily.display,
-            fontSize: fontSize.heading2,
-            lineHeight: lineHeight.heading2,
-            color: colors.textPrimary,
-          }}
-        >
-          {title}
-        </Text>
-        <Text
-          style={{
-            fontFamily: fontFamily.body,
-            fontSize: fontSize.secondary,
-            color: colors.textSecondary,
-            marginTop: spacing.lg,
-          }}
-        >
-          {message}
-        </Text>
-
+      {/*
+        The scrim fills the whole modal rather than sitting above the sheet.
+        As a sibling it stopped at the sheet's top edge, so the transparent
+        wedges left by the rounded corners showed the screen undimmed — a bright
+        band right where the corner should read.
+      */}
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <Pressable
-          onPress={onConfirm}
-          accessibilityRole="button"
-          style={{
-            alignItems: 'center',
-            paddingVertical: spacing.lg,
-            borderRadius: radius.xl,
-            backgroundColor: destructive ? colors.sheetAction : colors.primary,
-            marginTop: spacing['2xl'],
-          }}
-        >
-          <Text
-            style={{
-              fontFamily: fontFamily.bodySemiBold,
-              fontSize: fontSize.button,
-              color: destructive ? colors.dangerOnSheet : colors.onPrimary,
-            }}
-          >
-            {confirmLabel}
-          </Text>
-        </Pressable>
-
-        <Pressable
+          style={[StyleSheet.absoluteFill, { backgroundColor: colors.scrim }]}
           onPress={onCancel}
           accessibilityRole="button"
-          style={{ alignItems: 'center', paddingVertical: spacing.lg, marginTop: spacing.sm }}
+          accessibilityLabel={cancelLabel}
+        />
+        <View
+          style={{
+            backgroundColor: colors.sheet,
+            borderTopLeftRadius: radius.sheet,
+            borderTopRightRadius: radius.sheet,
+            paddingHorizontal: spacing.xl,
+            paddingTop: spacing['2xl'],
+            paddingBottom: insets.bottom + spacing.xl,
+          }}
         >
           <Text
             style={{
-              fontFamily: fontFamily.bodyMedium,
-              fontSize: fontSize.button,
-              color: colors.textSecondary,
+              fontFamily: fontFamily.display,
+              fontSize: fontSize.heading2,
+              lineHeight: lineHeight.heading2,
+              color: colors.textPrimary,
             }}
           >
-            {cancelLabel}
+            {title}
           </Text>
-        </Pressable>
+          <Text
+            style={{
+              fontFamily: fontFamily.body,
+              fontSize: fontSize.secondary,
+              color: colors.textSecondary,
+              marginTop: spacing.lg,
+            }}
+          >
+            {message}
+          </Text>
+
+          <Pressable
+            onPress={onConfirm}
+            accessibilityRole="button"
+            style={{
+              alignItems: 'center',
+              paddingVertical: spacing.lg,
+              borderRadius: radius.xl,
+              backgroundColor: destructive ? colors.sheetAction : colors.primary,
+              marginTop: spacing['2xl'],
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: fontFamily.bodySemiBold,
+                fontSize: fontSize.button,
+                color: destructive ? colors.dangerOnSheet : colors.onPrimary,
+              }}
+            >
+              {confirmLabel}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={onCancel}
+            accessibilityRole="button"
+            style={{ alignItems: 'center', paddingVertical: spacing.lg, marginTop: spacing.sm }}
+          >
+            <Text
+              style={{
+                fontFamily: fontFamily.bodyMedium,
+                fontSize: fontSize.button,
+                color: colors.textSecondary,
+              }}
+            >
+              {cancelLabel}
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </Modal>
   );
