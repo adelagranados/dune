@@ -11,6 +11,7 @@ import { formatDuration, formatSessionDuration, isSameDay } from '@/lib/time';
 import { useActiveTimerStore } from '@/state/useActiveTimerStore';
 import { Button } from '@/ui/components/Button';
 import { ConfirmDialog } from '@/ui/components/ConfirmDialog';
+import { ProjectActionsMenu } from '@/ui/components/ProjectActionsMenu';
 import { SessionRow } from '@/ui/components/SessionRow';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
@@ -102,17 +103,26 @@ export default function ProjectDetailScreen() {
         paddingBottom: insets.bottom + spacing['3xl'],
       }}
     >
-      <Pressable onPress={() => router.back()}>
-        <Text
-          style={{
-            fontFamily: fontFamily.body,
-            fontSize: fontSize.secondary,
-            color: colors.primaryText,
-          }}
-        >
-          {'‹ ' + t('projectDetail.back')}
-        </Text>
-      </Pressable>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Pressable onPress={() => router.back()}>
+          <Text
+            style={{
+              fontFamily: fontFamily.body,
+              fontSize: fontSize.secondary,
+              color: colors.primaryText,
+            }}
+          >
+            {'‹ ' + t('projectDetail.back')}
+          </Text>
+        </Pressable>
+        <ProjectActionsMenu
+          accessibilityLabel={t('projectDetail.actions')}
+          editLabel={t('projectDetail.editProject')}
+          deleteLabel={t('projectDetail.deleteProject')}
+          onEdit={() => router.push({ pathname: '/project/[id]/edit', params: { id: project.id } })}
+          onDelete={() => setProjectDeleteOpen(true)}
+        />
+      </View>
 
       <Text
         style={{
@@ -275,21 +285,6 @@ export default function ProjectDetailScreen() {
         style={{ marginTop: spacing.lg }}
       />
 
-      <Pressable
-        onPress={() => setProjectDeleteOpen(true)}
-        accessibilityRole="button"
-        style={{ alignItems: 'center', paddingVertical: spacing.lg, marginTop: spacing.lg }}
-      >
-        <Text
-          style={{
-            fontFamily: fontFamily.bodyMedium,
-            fontSize: fontSize.secondary,
-            color: colors.textSecondary,
-          }}
-        >
-          {t('projectDetail.deleteProject')}
-        </Text>
-      </Pressable>
       <ConfirmDialog
         visible={sessionToDelete !== null}
         title={t('projectDetail.deleteSessionTitle')}

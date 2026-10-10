@@ -3,6 +3,7 @@ export {
   CaretRightIcon,
   ChartBarIcon as StatsIcon,
   CheckIcon,
+  DotsThreeIcon,
   GearIcon as SettingsIcon,
   HouseIcon as HomeIcon,
   PauseIcon,

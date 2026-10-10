@@ -51,7 +51,9 @@
     "deleteProjectTitle": "¿Eliminar proyecto?",
     "deleteProjectMessage_one": "{{name}} y su {{count}} sesión se eliminarán. Esto no se puede deshacer.",
     "deleteProjectMessage_other": "{{name}} y sus {{count}} sesiones se eliminarán. Esto no se puede deshacer.",
-    "deleteProjectMessageEmpty": "{{name}} se eliminará. Esto no se puede deshacer."
+    "deleteProjectMessageEmpty": "{{name}} se eliminará. Esto no se puede deshacer.",
+    "actions": "Acciones del proyecto",
+    "editProject": "Editar proyecto"
   },
   "sessionLength": {
     "title": "Define tu meta de tiempo",
@@ -138,5 +140,10 @@
       "en": "English",
       "es": "Español"
     }
+  },
+  "editProject": {
+    "title": "Editar proyecto",
+    "subtitle": "Actualiza los datos de tu proyecto",
+    "submit": "Guardar cambios"
   }
 }
