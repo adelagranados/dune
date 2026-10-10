@@ -2,7 +2,6 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Project, Session } from '@/data/db/schema';
@@ -12,6 +11,7 @@ import { formatDuration, isSameDay } from '@/lib/time';
 import { useActiveTimerStore } from '@/state/useActiveTimerStore';
 import { Button } from '@/ui/components/Button';
 import { ConfirmDialog } from '@/ui/components/ConfirmDialog';
+import { SessionRow } from '@/ui/components/SessionRow';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
 export default function ProjectDetailScreen() {
@@ -240,70 +240,12 @@ export default function ProjectDetailScreen() {
       ) : (
         <View style={{ marginTop: spacing.lg }}>
           {sessions.map((session) => (
-            <ReanimatedSwipeable
+            <SessionRow
               key={session.id}
-              friction={2}
-              rightThreshold={40}
-              renderRightActions={() => (
-                <Pressable
-                  onPress={() => setSessionToDelete(session)}
-                  accessibilityRole="button"
-                  style={{
-                    justifyContent: 'center',
-                    paddingHorizontal: spacing.xl,
-                    marginVertical: spacing.xs,
-                    borderRadius: radius.sm,
-                    backgroundColor: colors.danger,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: fontFamily.bodySemiBold,
-                      fontSize: fontSize.secondary,
-                      color: colors.onPrimary,
-                    }}
-                  >
-                    {t('common.delete')}
-                  </Text>
-                </Pressable>
-              )}
-              containerStyle={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingVertical: spacing.md,
-                gap: spacing.md,
-              }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-                <View
-                  style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 5,
-                    backgroundColor: projectColors[project.color],
-                  }}
-                />
-                <Text
-                  style={{
-                    fontFamily: fontFamily.body,
-                    fontSize: fontSize.secondary,
-                    color: colors.textPrimary,
-                  }}
-                >
-                  {formatSessionDay(session.startedAt)}
-                </Text>
-              </View>
-              <Text
-                style={{
-                  fontFamily: fontFamily.bodySemiBold,
-                  fontSize: fontSize.body,
-                  color: colors.textPrimary,
-                }}
-              >
-                {formatDuration(session.durationMs)}
-              </Text>
-            </ReanimatedSwipeable>
+              label={`${formatSessionDay(session.startedAt)} · ${formatDuration(session.durationMs)}`}
+              onDelete={() => setSessionToDelete(session)}
+              deleteLabel={t('common.delete')}
+            />
           ))}
         </View>
       )}
@@ -344,9 +286,7 @@ export default function ProjectDetailScreen() {
       <ConfirmDialog
         visible={sessionToDelete !== null}
         title={t('projectDetail.deleteSessionTitle')}
-        message={t('projectDetail.deleteSessionMessage', {
-          duration: formatDuration(sessionToDelete?.durationMs ?? 0),
-        })}
+        message={t('projectDetail.deleteSessionMessage')}
         confirmLabel={t('common.delete')}
         cancelLabel={t('common.cancel')}
         destructive
@@ -356,11 +296,14 @@ export default function ProjectDetailScreen() {
 
       <ConfirmDialog
         visible={projectDeleteOpen}
-        title={t('projectDetail.deleteProjectTitle', { name: project.name })}
+        title={t('projectDetail.deleteProjectTitle')}
         message={
           sessions.length === 0
-            ? t('projectDetail.deleteProjectMessageEmpty')
-            : t('projectDetail.deleteProjectMessage', { count: sessions.length })
+            ? t('projectDetail.deleteProjectMessageEmpty', { name: project.name })
+            : t('projectDetail.deleteProjectMessage', {
+                name: project.name,
+                count: sessions.length,
+              })
         }
         confirmLabel={t('common.delete')}
         cancelLabel={t('common.cancel')}

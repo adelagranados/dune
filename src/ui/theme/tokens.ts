@@ -18,6 +18,8 @@ export const radius = {
   xl: 26,
   '2xl': 28,
   full: 32,
+  /** Modal sheets. */
+  sheet: 30,
 } as const;
 
 export const fontSize = {
@@ -77,6 +79,22 @@ export type ColorTokens = {
    * primary's ~15, so it reads as red rather than as the brand.
    */
   danger: string;
+  /** Background of a modal sheet. */
+  sheet: string;
+  /** A pressable sitting inside a sheet. */
+  sheetAction: string;
+  /**
+   * The destructive label on `sheetAction`.
+   *
+   * **Below AA, as a deliberate design decision.** 2.34:1 in light and 4.33:1
+   * in dark, where Cancel reaches 4.94:1 and 4.76:1 — so the destructive
+   * action reads less easily than the safe one. Darker values were measured
+   * and declined in favour of the designed tone. Recorded in
+   * docs/color-tokens.md.
+   */
+  dangerOnSheet: string;
+  /** The swipe-to-delete affordance revealed behind a session row. */
+  swipeAction: string;
 };
 
 export const lightColors: ColorTokens = {
@@ -94,6 +112,10 @@ export const lightColors: ColorTokens = {
   // Ink rather than cream: cream on terracotta is only 3.28:1, under AA.
   onPrimary: '#1E1A18',
   danger: '#A8372A',
+  sheet: '#E7DCD1',
+  sheetAction: '#C9B9AC',
+  dangerOnSheet: '#B75D52',
+  swipeAction: '#EFE0D9',
 };
 
 export const darkColors: ColorTokens = {
@@ -110,6 +132,10 @@ export const darkColors: ColorTokens = {
   onPrimary: '#1E1A18',
   // Lifted when `surface` lightened, which had pushed this under AA.
   danger: '#EE8271',
+  sheet: '#4A3D36',
+  sheetAction: '#3B322C',
+  dangerOnSheet: '#EB7567',
+  swipeAction: '#59403A',
 };
 
 /**

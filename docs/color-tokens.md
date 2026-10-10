@@ -101,3 +101,35 @@ to be dropped.
 `notification_icon_color` in `app.json` is `#C86F52` — `primary`, written as a
 literal because config plugins run outside the React tree and cannot read the
 theme. If `primary` changes, that literal has to change with it.
+
+## Sheet and swipe tokens
+
+Added with the delete redesign (Figma `162:186`, `162:238`, `162:360`).
+
+| Token           | Light     | Dark      |
+| --------------- | --------- | --------- |
+| `sheet`         | `#E7DCD1` | `#4A3D36` |
+| `sheetAction`   | `#C9B9AC` | `#3B322C` |
+| `dangerOnSheet` | `#B75D52` | `#EB7567` |
+| `swipeAction`   | `#EFE0D9` | `#59403A` |
+
+### `dangerOnSheet` is below AA — a deliberate decision
+
+|       | Delete                              | Cancel |
+| ----- | ----------------------------------- | ------ |
+| light | `#B75D52` on `#C9B9AC` — **2.34:1** | 4.94:1 |
+| dark  | `#EB7567` on `#3B322C` — **4.33:1** | 4.76:1 |
+
+AA asks 4.5:1. Light is under half of it, and in both themes **the destructive
+action reads less easily than the safe one** — the opposite of what a
+confirmation is for.
+
+Alternatives were measured and declined:
+
+- darkening the label to `#8E2C21` (4.35:1) or `#7E2719` (5.03:1)
+- lightening the fill to `#E3D8CC` (4.61:1), which drops the button to 1.04:1
+  against the sheet and stops it reading as a button at all
+
+The designed tone was kept. Recorded here so the number is known rather than
+discovered, and so nobody "fixes" it without the context — the same treatment
+`textPlaceholder` gets.
