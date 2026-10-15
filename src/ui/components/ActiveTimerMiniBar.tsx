@@ -65,11 +65,16 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
   const reportInset = useContext(MiniBarInsetMeasureContext);
 
   const [project, setProject] = useState<Project | null>(null);
-  const elapsedMs = useElapsedClock(timer);
 
   const projectId = timer?.projectId;
   const isRunning = timer !== null && timer.pausedAt === null;
   const hidden = !timer || pathname === TIMER_ROUTE;
+
+  // Nothing to read from while the bar is hidden, and passing the timer
+  // anyway would leave a second repaint loop running against a component that
+  // renders null — on the timer route, next to the clock that is actually on
+  // screen.
+  const elapsedMs = useElapsedClock(hidden ? null : timer);
 
   useEffect(() => {
     if (!projectId) {
