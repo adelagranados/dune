@@ -9,6 +9,7 @@ import {
   type ProjectWithTotal,
 } from '@/data/repositories/projectRepository';
 import { formatDuration } from '@/lib/time';
+import { useMiniBarInset } from '@/ui/components/ActiveTimerMiniBar';
 import { Button } from '@/ui/components/Button';
 import { Hourglass } from '@/ui/icons';
 import { useTheme } from '@/ui/theme/ThemeProvider';
@@ -18,6 +19,7 @@ export default function HomeScreen() {
   const { colors, projectColors, radius, spacing, fontFamily, fontSize } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const miniBarInset = useMiniBarInset();
   const [projects, setProjects] = useState<ProjectWithTotal[] | null>(null);
 
   useFocusEffect(
@@ -112,6 +114,9 @@ export default function HomeScreen() {
           <FlatList
             data={projects}
             keyExtractor={(item) => item.project.id}
+            // Leaves room for the mini bar, so "+ New project" at the end of a
+            // long list is never left underneath it.
+            contentContainerStyle={{ paddingBottom: miniBarInset }}
             ItemSeparatorComponent={() => (
               <View style={{ height: 1, backgroundColor: colors.divider }} />
             )}

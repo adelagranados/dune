@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import {
   computeActiveElapsedMs,
+  computeElapsedMsForDisplay,
+  computeMsUntilNextSecond,
   computeRemainingTargetMs,
   computeTargetFireAt,
   finishSession,
@@ -175,5 +177,91 @@ describe('computeTargetFireAt', () => {
     const timer = startSession('project-1', minutes(60), T0);
 
     expect(computeTargetFireAt(timer, T0 + minutes(25))).toBe(T0 + minutes(60));
+  });
+});
+
+describe('computeMsUntilNextSecond', () => {
+  it('waits out the remainder of the second in progress', () => {
+    const timer = startSession('project-1', null, T0);
+
+    expect(computeMsUntilNextSecond(timer, T0)).toBe(1000);
+    expect(computeMsUntilNextSecond(timer, T0 + 250)).toBe(750);
+    expect(computeMsUntilNextSecond(timer, T0 + 999)).toBe(1);
+    expect(computeMsUntilNextSecond(timer, T0 + 1000)).toBe(1000);
+  });
+
+  it('follows the boundary a resume moves it to', () => {
+    // Started on the second, paused 400ms in, resumed 2s later. Resuming does
+    // not restart the second: 400ms of it are already spent, so the next
+    // turnover is 600ms away and lands 600ms past each wall-clock second from
+    // then on. Repainting a flat second from the old phase is what let a
+    // digit linger or skip.
+    const started = startSession('project-1', null, T0);
+    const paused = pauseSession(started, T0 + 400);
+    const resumed = resumeSession(paused, T0 + 2400);
+
+    expect(computeMsUntilNextSecond(resumed, T0 + 2400)).toBe(600);
+    expect(computeMsUntilNextSecond(resumed, T0 + 2500)).toBe(500);
+    expect(computeMsUntilNextSecond(resumed, T0 + 3000)).toBe(1000);
+    expect(computeMsUntilNextSecond(resumed, T0 + 3400)).toBe(600);
+  });
+
+  it('has nothing to wait for while paused', () => {
+    const paused = pauseSession(startSession('project-1', null, T0), T0 + 500);
+
+    expect(computeMsUntilNextSecond(paused, T0 + 9000)).toBeNull();
+  });
+});
+
+describe('computeElapsedMsForDisplay', () => {
+  it('uses a current reading as it stands', () => {
+    const timer = startSession('project-1', null, T0);
+
+    expect(computeElapsedMsForDisplay(timer, { timer, now: T0 + 4000 })).toBe(4000);
+  });
+
+  it('ignores the reading entirely while paused', () => {
+    const paused = pauseSession(startSession('project-1', null, T0), T0 + 4000);
+
+    // A reading from before the pause, and from well after it: a frozen clock
+    // answers the same either way.
+    expect(computeElapsedMsForDisplay(paused, { timer: null, now: T0 })).toBe(4000);
+    expect(computeElapsedMsForDisplay(paused, { timer: null, now: T0 + 60_000 })).toBe(4000);
+  });
+
+  it('does not step backwards when a resume outruns the reading', () => {
+    // The defect this exists for. The clock reads 4s, the session sits paused
+    // for twelve, and the resume lands before any fresh reading is taken.
+    const paused = pauseSession(startSession('project-1', null, T0), T0 + 4000);
+    const resumed = resumeSession(paused, T0 + 16_000);
+    const readingFromThePause = { timer: paused, now: T0 + 4000 };
+
+    expect(computeElapsedMsForDisplay(resumed, readingFromThePause)).toBe(4000);
+    // Reading straight off the resumed timer is what lost the twelve seconds.
+    expect(computeActiveElapsedMs(resumed, readingFromThePause.now)).toBe(-8000);
+  });
+
+  it('picks the reading back up once it catches the resumed timer', () => {
+    const paused = pauseSession(startSession('project-1', null, T0), T0 + 4000);
+    const resumed = resumeSession(paused, T0 + 16_000);
+
+    expect(computeElapsedMsForDisplay(resumed, { timer: resumed, now: T0 + 19_000 })).toBe(7000);
+  });
+
+  it('refuses a reading left over from another session', () => {
+    // Finishing clears the timer but not the last reading, so starting again
+    // would otherwise report the finished session's total.
+    const finished = startSession('project-1', null, T0);
+    const fresh = startSession('project-2', null, T0 + 30_000);
+
+    // Negative, which the clock prints as zero — right for a session that has
+    // only just begun, where the old session's 25s would not be.
+    expect(computeElapsedMsForDisplay(fresh, { timer: finished, now: T0 + 25_000 })).toBe(-5000);
+  });
+
+  it('has nothing to report with no session', () => {
+    const timer = startSession('project-1', null, T0);
+
+    expect(computeElapsedMsForDisplay(null, { timer, now: T0 + 4000 })).toBe(0);
   });
 });
