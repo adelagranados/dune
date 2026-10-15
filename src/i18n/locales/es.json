@@ -42,6 +42,7 @@
     "sessionsEmpty": "Tus sesiones registradas aparecerán aquí.",
     "startTimer": "Iniciar timer",
     "openTimer": "Ver timer en curso",
+    "timerRunningElsewhere": "{{name}} tiene un timer en curso ahora mismo.",
     "addManualEntry": "Agregar tiempo manual",
     "today": "Hoy",
     "yesterday": "Ayer",

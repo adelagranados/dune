@@ -1,5 +1,5 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -29,6 +29,23 @@ export default function ProjectDetailScreen() {
   const [swipedSessionId, setSwipedSessionId] = useState<string | null>(null);
   const [projectDeleteOpen, setProjectDeleteOpen] = useState(false);
   const activeTimer = useActiveTimerStore((state) => state.timer);
+  const [timerProject, setTimerProject] = useState<Project | null>(null);
+
+  // Only when the running timer belongs to somewhere else. Standing on the
+  // project that owns it, "Open running timer" is already unambiguous; the
+  // confusion is being sent to another project's session with nothing on
+  // screen saying whose it is.
+  const timerProjectId = activeTimer && activeTimer.projectId !== id ? activeTimer.projectId : null;
+
+  useEffect(() => {
+    if (!timerProjectId) {
+      return;
+    }
+    // Nothing clears this on the way out: the render below already ignores a
+    // name that no longer matches the running timer, so resetting here would
+    // only be a second render saying what the guard already says.
+    getProjectById(timerProjectId).then(setTimerProject);
+  }, [timerProjectId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -267,6 +284,19 @@ export default function ProjectDetailScreen() {
         </View>
       )}
 
+      {timerProject && timerProject.id === timerProjectId ? (
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: fontSize.secondary,
+            color: colors.textSecondary,
+            marginTop: spacing['4xl'],
+          }}
+        >
+          {t('projectDetail.timerRunningElsewhere', { name: timerProject.name })}
+        </Text>
+      ) : null}
+
       <Button
         label={activeTimer ? t('projectDetail.openTimer') : t('projectDetail.startTimer')}
         onPress={() =>
@@ -274,7 +304,7 @@ export default function ProjectDetailScreen() {
             ? router.push('/timer')
             : router.push({ pathname: '/session-length', params: { projectId: project.id } })
         }
-        style={{ marginTop: spacing['4xl'] }}
+        style={{ marginTop: timerProject ? spacing.lg : spacing['4xl'] }}
       />
       <Button
         label={t('projectDetail.addManualEntry')}
