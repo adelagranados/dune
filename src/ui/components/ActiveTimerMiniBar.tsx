@@ -132,34 +132,30 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
         </Text>
       </View>
 
-      {/* The same pairing the timer screen uses: one control, one appearance. */}
+      {/*
+        The icon alone. With no label to read, the action is carried entirely
+        by `accessibilityLabel` — a screen reader would otherwise announce an
+        unnamed button — and the square keeps a 44pt target that the old
+        text pill never actually reached.
+      */}
       <Pressable
         onPress={isRunning ? pause : resume}
         accessibilityRole="button"
+        accessibilityLabel={isRunning ? t('activeTimer.pause') : t('activeTimer.resume')}
         style={{
-          flexDirection: 'row',
+          width: 44,
+          height: 44,
           alignItems: 'center',
-          gap: spacing.sm,
+          justifyContent: 'center',
           backgroundColor: colors.background,
           borderRadius: radius.sm,
-          paddingHorizontal: spacing.lg,
-          paddingVertical: spacing.sm,
         }}
       >
         {isRunning ? (
-          <PauseIcon color={colors.primaryText} size={14} weight="regular" />
+          <PauseIcon color={colors.primaryText} size={20} weight="regular" />
         ) : (
-          <PlayIcon color={colors.primaryText} size={14} weight="regular" />
+          <PlayIcon color={colors.primaryText} size={20} weight="regular" />
         )}
-        <Text
-          style={{
-            fontFamily: fontFamily.body,
-            fontSize: fontSize.secondary,
-            color: colors.primaryText,
-          }}
-        >
-          {isRunning ? t('activeTimer.pause') : t('activeTimer.resume')}
-        </Text>
       </Pressable>
     </Pressable>
   );
