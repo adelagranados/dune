@@ -91,6 +91,12 @@ export default function ProjectDetailScreen() {
     return <View style={containerStyle} />;
   }
 
+  // One condition for the hint and for the spacing above the button. Read
+  // separately they come apart: the loaded project is never cleared, so once
+  // the session it belongs to finishes, a truthiness check would still be
+  // closing the gap for a hint that is no longer rendered.
+  const runningElsewhere = timerProject !== null && timerProject.id === timerProjectId;
+
   const totalDurationMs = sessions.reduce((total, session) => total + session.durationMs, 0);
   const estimateProgress = project.estimatedTimeMs
     ? Math.min(totalDurationMs / project.estimatedTimeMs, 1)
@@ -284,7 +290,7 @@ export default function ProjectDetailScreen() {
         </View>
       )}
 
-      {timerProject && timerProject.id === timerProjectId ? (
+      {runningElsewhere ? (
         <Text
           style={{
             fontFamily: fontFamily.body,
@@ -304,7 +310,7 @@ export default function ProjectDetailScreen() {
             ? router.push('/timer')
             : router.push({ pathname: '/session-length', params: { projectId: project.id } })
         }
-        style={{ marginTop: timerProject ? spacing.lg : spacing['4xl'] }}
+        style={{ marginTop: runningElsewhere ? spacing.lg : spacing['4xl'] }}
       />
       <Button
         label={t('projectDetail.addManualEntry')}

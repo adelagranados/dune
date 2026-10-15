@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
@@ -13,11 +13,14 @@ import { useElapsedClock } from '@/ui/hooks/useElapsedClock';
 import { CheckIcon, Hourglass, PauseIcon, PlayIcon } from '@/ui/icons';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
+const TIMER_ROUTE = '/timer';
+
 export default function ActiveTimerScreen() {
   const { t, i18n } = useTranslation();
   const { colors, radius, spacing, fontFamily, fontSize, lineHeight } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const pathname = usePathname();
 
   const timer = useActiveTimerStore((state) => state.timer);
   const pause = useActiveTimerStore((state) => state.pause);
@@ -26,7 +29,11 @@ export default function ActiveTimerScreen() {
 
   const [project, setProject] = useState<Project | null>(null);
   const [sessionNumber, setSessionNumber] = useState<number | null>(null);
-  const elapsedMs = useElapsedClock(timer);
+  // The tab navigator keeps this screen mounted after you leave it, so
+  // without a gate its clock would go on repainting off-screen beside the
+  // mini bar's. The bar hides on exactly this route, so the two gates are
+  // complements: one clock runs, never both, never neither.
+  const elapsedMs = useElapsedClock(pathname === TIMER_ROUTE ? timer : null);
 
   const projectId = timer?.projectId;
   const isRunning = timer !== null && timer.pausedAt === null;
