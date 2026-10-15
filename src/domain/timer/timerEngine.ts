@@ -109,3 +109,24 @@ export function computeTargetFireAt(timer: ActiveTimer, now: number): number | n
   }
   return now + remainingMs;
 }
+
+/**
+ * How long from `now` until the elapsed time crosses its next whole second.
+ *
+ * A clock drawn from these timestamps turns over on a boundary set by
+ * `startedAt` and the pauses so far, not on whatever phase a repeating 1000ms
+ * timer happened to start on — and resuming moves that boundary by the length
+ * of the pause. Repainting on the wrong phase is what made the digits hold for
+ * about two seconds, or skip one, after a quick pause and resume.
+ *
+ * Null while paused: a frozen clock has no next second to wait for, and the
+ * current pause is not in `accumulatedPausedMs` yet, so there is no boundary
+ * to measure from either.
+ */
+export function computeMsUntilNextSecond(timer: ActiveTimer, now: number): number | null {
+  if (timer.pausedAt !== null) {
+    return null;
+  }
+  const turnoverAnchor = timer.startedAt + timer.accumulatedPausedMs;
+  return 1000 - ((now - turnoverAnchor) % 1000);
+}

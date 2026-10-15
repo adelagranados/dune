@@ -1,15 +1,15 @@
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppState, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Project } from '@/data/db/schema';
 import { getProjectById } from '@/data/repositories/projectRepository';
 import { countSessionsByProject, createSession } from '@/data/repositories/sessionRepository';
-import { computeActiveElapsedMs } from '@/domain/timer/timerEngine';
 import { formatTimerClock } from '@/lib/time';
 import { useActiveTimerStore } from '@/state/useActiveTimerStore';
+import { useElapsedClock } from '@/ui/hooks/useElapsedClock';
 import { CheckIcon, Hourglass, PauseIcon, PlayIcon } from '@/ui/icons';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
@@ -26,7 +26,7 @@ export default function ActiveTimerScreen() {
 
   const [project, setProject] = useState<Project | null>(null);
   const [sessionNumber, setSessionNumber] = useState<number | null>(null);
-  const [now, setNow] = useState(() => Date.now());
+  const elapsedMs = useElapsedClock(timer);
 
   const projectId = timer?.projectId;
   const isRunning = timer !== null && timer.pausedAt === null;
@@ -38,30 +38,6 @@ export default function ActiveTimerScreen() {
     getProjectById(projectId).then(setProject);
     countSessionsByProject(projectId).then((count) => setSessionNumber(count + 1));
   }, [projectId]);
-
-  // The clock is only a view of the timestamps: this re-renders every second
-  // while the screen is up, and resyncs on foreground since JS timers are
-  // throttled in the background.
-  //
-  // It deliberately does not depend on whether the timer is running. Keying it
-  // on that rebuilt the interval on every pause and resume, firing an extra
-  // tick on each side of the transition and repainting the clock out of step —
-  // which is what read as a flicker. `computeActiveElapsedMs` already freezes
-  // while paused, so ticking through a pause renders the same value and costs
-  // nothing.
-  useFocusEffect(
-    useCallback(() => {
-      setNow(Date.now());
-      const interval = setInterval(() => setNow(Date.now()), 1000);
-      const subscription = AppState.addEventListener('change', (status) => {
-        if (status === 'active') setNow(Date.now());
-      });
-      return () => {
-        clearInterval(interval);
-        subscription.remove();
-      };
-    }, []),
-  );
 
   if (!timer) {
     return (
@@ -86,7 +62,6 @@ export default function ActiveTimerScreen() {
     );
   }
 
-  const elapsedMs = computeActiveElapsedMs(timer, now);
   const startedAtLabel = new Date(timer.startedAt).toLocaleTimeString(i18n.language, {
     hour: 'numeric',
     minute: '2-digit',
@@ -146,8 +121,19 @@ export default function ActiveTimerScreen() {
         }}
       >
         <Hourglass color={colors.primary} width={90} />
+        {/*
+          Stretched rather than centred by the parent, which is what stops the
+          last digit being clipped. `alignItems: 'center'` shrink-wraps a child
+          to its text's advance width, and DM Serif Display's italics lean past
+          that width — an italic 7 most of all — so Android cut the overhang
+          off at the view bounds. Filling the card and centring the glyphs
+          instead leaves the lean somewhere to go, with no padding to keep in
+          step with the type size.
+        */}
         <Text
           style={{
+            alignSelf: 'stretch',
+            textAlign: 'center',
             fontFamily: fontFamily.displayItalic,
             fontSize: fontSize.displayLarge,
             lineHeight: lineHeight.displayLarge,

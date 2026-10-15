@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   computeActiveElapsedMs,
+  computeMsUntilNextSecond,
   computeRemainingTargetMs,
   computeTargetFireAt,
   finishSession,
@@ -175,5 +176,38 @@ describe('computeTargetFireAt', () => {
     const timer = startSession('project-1', minutes(60), T0);
 
     expect(computeTargetFireAt(timer, T0 + minutes(25))).toBe(T0 + minutes(60));
+  });
+});
+
+describe('computeMsUntilNextSecond', () => {
+  it('waits out the remainder of the second in progress', () => {
+    const timer = startSession('project-1', null, T0);
+
+    expect(computeMsUntilNextSecond(timer, T0)).toBe(1000);
+    expect(computeMsUntilNextSecond(timer, T0 + 250)).toBe(750);
+    expect(computeMsUntilNextSecond(timer, T0 + 999)).toBe(1);
+    expect(computeMsUntilNextSecond(timer, T0 + 1000)).toBe(1000);
+  });
+
+  it('follows the boundary a resume moves it to', () => {
+    // Started on the second, paused 400ms in, resumed 2s later. Resuming does
+    // not restart the second: 400ms of it are already spent, so the next
+    // turnover is 600ms away and lands 600ms past each wall-clock second from
+    // then on. Repainting a flat second from the old phase is what let a
+    // digit linger or skip.
+    const started = startSession('project-1', null, T0);
+    const paused = pauseSession(started, T0 + 400);
+    const resumed = resumeSession(paused, T0 + 2400);
+
+    expect(computeMsUntilNextSecond(resumed, T0 + 2400)).toBe(600);
+    expect(computeMsUntilNextSecond(resumed, T0 + 2500)).toBe(500);
+    expect(computeMsUntilNextSecond(resumed, T0 + 3000)).toBe(1000);
+    expect(computeMsUntilNextSecond(resumed, T0 + 3400)).toBe(600);
+  });
+
+  it('has nothing to wait for while paused', () => {
+    const paused = pauseSession(startSession('project-1', null, T0), T0 + 500);
+
+    expect(computeMsUntilNextSecond(paused, T0 + 9000)).toBeNull();
   });
 });

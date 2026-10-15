@@ -1,13 +1,13 @@
 import { usePathname, useRouter } from 'expo-router';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppState, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import type { Project } from '@/data/db/schema';
 import { getProjectById } from '@/data/repositories/projectRepository';
-import { computeActiveElapsedMs } from '@/domain/timer/timerEngine';
 import { formatTimerClock } from '@/lib/time';
 import { useActiveTimerStore } from '@/state/useActiveTimerStore';
+import { useElapsedClock } from '@/ui/hooks/useElapsedClock';
 import { Hourglass, PauseIcon, PlayIcon } from '@/ui/icons';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
@@ -65,7 +65,7 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
   const reportInset = useContext(MiniBarInsetMeasureContext);
 
   const [project, setProject] = useState<Project | null>(null);
-  const [now, setNow] = useState(() => Date.now());
+  const elapsedMs = useElapsedClock(timer);
 
   const projectId = timer?.projectId;
   const isRunning = timer !== null && timer.pausedAt === null;
@@ -77,20 +77,6 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
     }
     getProjectById(projectId).then(setProject);
   }, [projectId]);
-
-  useEffect(() => {
-    if (!isRunning) {
-      return;
-    }
-    const interval = setInterval(() => setNow(Date.now()), 1000);
-    const subscription = AppState.addEventListener('change', (status) => {
-      if (status === 'active') setNow(Date.now());
-    });
-    return () => {
-      clearInterval(interval);
-      subscription.remove();
-    };
-  }, [isRunning]);
 
   // The screens below need the inset released as soon as the bar goes, not
   // when it next happens to lay out — otherwise a finished session leaves a
@@ -142,7 +128,7 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
             color: colors.textPrimary,
           }}
         >
-          {formatTimerClock(computeActiveElapsedMs(timer, now))}
+          {formatTimerClock(elapsedMs)}
         </Text>
       </View>
 
