@@ -2,41 +2,11 @@ import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 
 import {
-  computeActiveElapsedMs,
+  computeElapsedMsForDisplay,
   computeMsUntilNextSecond,
   type ActiveTimer,
+  type ElapsedReading,
 } from '@/domain/timer/timerEngine';
-
-type Sample = {
-  /** The timer this reading was taken against. */
-  timer: ActiveTimer | null;
-  now: number;
-};
-
-/**
- * Picks the timer the elapsed time should be read from.
- *
- * A reference time only means anything for the timer it was captured against,
- * and the two come apart constantly: pausing and resuming each replace the
- * timer, which cancels the repaint this hook had pending, so nothing refreshes
- * the reading until a new tick lands. Every resume meanwhile folds its pause
- * into `accumulatedPausedMs` — and subtracting that larger total from a
- * reading taken before it left the clock short by exactly how long the pause
- * had lasted. Twelve seconds paused showed as twelve seconds lost.
- *
- * Rather than scramble to refresh the reading, this leans on the engine:
- * elapsed time is continuous across a pause and a resume, and a paused timer
- * reports its frozen value without consulting the reference at all. So a
- * paused timer always answers for itself, and a running one whose reading
- * predates it defers to the paused timer that reading *was* taken against,
- * which still reports the value the clock resumed from.
- */
-function referenceTimer(timer: ActiveTimer | null, sample: Sample): ActiveTimer | null {
-  if (timer === null || timer.pausedAt !== null) {
-    return timer;
-  }
-  return sample.timer === timer ? timer : (sample.timer ?? timer);
-}
 
 /**
  * A session's active elapsed time, repainted once per displayed second.
@@ -50,12 +20,10 @@ function referenceTimer(timer: ActiveTimer | null, sample: Sample): ActiveTimer 
  * running long after the timer screen was fixed for exactly that.
  */
 export function useElapsedClock(timer: ActiveTimer | null): number {
-  const [sample, setSample] = useState<Sample>(() => ({ timer, now: Date.now() }));
+  const [reading, setReading] = useState<ElapsedReading>(() => ({ timer, now: Date.now() }));
 
   useEffect(() => {
-    // A frozen clock has nothing to repaint — it reads `pausedAt`, not the
-    // reference — and resuming re-runs this.
-    if (timer === null || timer.pausedAt !== null) {
+    if (timer === null) {
       return;
     }
 
@@ -63,12 +31,19 @@ export function useElapsedClock(timer: ActiveTimer | null): number {
 
     const tick = () => {
       const now = Date.now();
-      setSample({ timer, now });
+      setReading({ timer, now });
+      const untilNextSecond = computeMsUntilNextSecond(timer, now);
+      if (untilNextSecond === null) {
+        // Paused. The reading has been recorded, which is all a pause needs:
+        // the digits are frozen, so there is nothing left to repaint until a
+        // resume brings us back here.
+        return;
+      }
       // Onto the boundary the elapsed time actually turns over on, not a flat
       // second from whatever phase this happened to start on. Every resume
       // moves that boundary, and repainting off it let a digit linger for
       // about two seconds, or skip one.
-      timeout = setTimeout(tick, computeMsUntilNextSecond(timer, now) ?? 1000);
+      timeout = setTimeout(tick, untilNextSecond);
     };
 
     // Straight away, so the reading catches up with this timer in the frame
@@ -91,6 +66,5 @@ export function useElapsedClock(timer: ActiveTimer | null): number {
     };
   }, [timer]);
 
-  const reference = referenceTimer(timer, sample);
-  return reference ? computeActiveElapsedMs(reference, sample.now) : 0;
+  return computeElapsedMsForDisplay(timer, reading);
 }
