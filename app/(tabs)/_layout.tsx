@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ActiveTimerMiniBar } from '@/ui/components/ActiveTimerMiniBar';
+import { ActiveTimerMiniBar, MiniBarInsetProvider } from '@/ui/components/ActiveTimerMiniBar';
 import { HomeIcon, SettingsIcon, StatsIcon } from '@/ui/icons';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
@@ -25,69 +25,71 @@ export default function TabsLayout() {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={{ flex: 1 }}>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarActiveTintColor: colors.primaryText,
-          tabBarInactiveTintColor: colors.textSecondary,
-          tabBarIconStyle: { height: 22 },
-          tabBarLabelStyle: { fontSize: fontSize.label, marginTop: 2 },
-          tabBarStyle: {
-            // The page colour, and no rule above it: the nav sits flush with
-            // the content rather than being fenced off from it.
-            backgroundColor: colors.background,
-            borderTopWidth: 0,
-            height: TAB_BAR_CONTENT_HEIGHT + insets.bottom,
-            paddingTop: 6,
-            paddingBottom: insets.bottom,
-          },
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: t('tabs.home'),
-            tabBarIcon: ({ focused, size }) => (
-              <HomeIcon
-                color={focused ? colors.primaryText : colors.textSecondary}
-                size={size}
-                weight="regular"
-              />
-            ),
+    <MiniBarInsetProvider>
+      <View style={{ flex: 1 }}>
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+            tabBarActiveTintColor: colors.primaryText,
+            tabBarInactiveTintColor: colors.textSecondary,
+            tabBarIconStyle: { height: 22 },
+            tabBarLabelStyle: { fontSize: fontSize.label, marginTop: 2 },
+            tabBarStyle: {
+              // The page colour, and no rule above it: the nav sits flush with
+              // the content rather than being fenced off from it.
+              backgroundColor: colors.background,
+              borderTopWidth: 0,
+              height: TAB_BAR_CONTENT_HEIGHT + insets.bottom,
+              paddingTop: 6,
+              paddingBottom: insets.bottom,
+            },
           }}
-        />
-        <Tabs.Screen
-          name="stats"
-          options={{
-            title: t('tabs.stats'),
-            tabBarIcon: ({ focused, size }) => (
-              <StatsIcon
-                color={focused ? colors.primaryText : colors.textSecondary}
-                size={size}
-                weight="regular"
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: t('tabs.settings'),
-            tabBarIcon: ({ focused, size }) => (
-              <SettingsIcon
-                color={focused ? colors.primaryText : colors.textSecondary}
-                size={size}
-                weight="regular"
-              />
-            ),
-          }}
-        />
-        {/* The timer keeps the bottom nav visible but is never a tab of its own. */}
-        <Tabs.Screen name="timer" options={{ href: null }} />
-      </Tabs>
+        >
+          <Tabs.Screen
+            name="index"
+            options={{
+              title: t('tabs.home'),
+              tabBarIcon: ({ focused, size }) => (
+                <HomeIcon
+                  color={focused ? colors.primaryText : colors.textSecondary}
+                  size={size}
+                  weight="regular"
+                />
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="stats"
+            options={{
+              title: t('tabs.stats'),
+              tabBarIcon: ({ focused, size }) => (
+                <StatsIcon
+                  color={focused ? colors.primaryText : colors.textSecondary}
+                  size={size}
+                  weight="regular"
+                />
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="settings"
+            options={{
+              title: t('tabs.settings'),
+              tabBarIcon: ({ focused, size }) => (
+                <SettingsIcon
+                  color={focused ? colors.primaryText : colors.textSecondary}
+                  size={size}
+                  weight="regular"
+                />
+              ),
+            }}
+          />
+          {/* The timer keeps the bottom nav visible but is never a tab of its own. */}
+          <Tabs.Screen name="timer" options={{ href: null }} />
+        </Tabs>
 
-      <ActiveTimerMiniBar bottomOffset={TAB_BAR_CONTENT_HEIGHT + insets.bottom + spacing.md} />
-    </View>
+        <ActiveTimerMiniBar bottomOffset={TAB_BAR_CONTENT_HEIGHT + insets.bottom + spacing.md} />
+      </View>
+    </MiniBarInsetProvider>
   );
 }

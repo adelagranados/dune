@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { LanguagePreference, ThemePreference } from '@/data/kv/settings.store';
 import { useSettingsStore } from '@/state/useSettingsStore';
+import { useMiniBarInset } from '@/ui/components/ActiveTimerMiniBar';
 import { SegmentedControl } from '@/ui/components/SegmentedControl';
 import { SettingsRow } from '@/ui/components/SettingsRow';
 import { CheckIcon } from '@/ui/icons';
@@ -23,6 +24,7 @@ export default function SettingsScreen() {
   const language = useSettingsStore((state) => state.language);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
 
+  const miniBarInset = useMiniBarInset();
   const [languageSheetOpen, setLanguageSheetOpen] = useState(false);
 
   return (
@@ -31,7 +33,7 @@ export default function SettingsScreen() {
       contentContainerStyle={{
         paddingHorizontal: spacing.xl,
         paddingTop: insets.top + spacing.lg,
-        paddingBottom: spacing['3xl'],
+        paddingBottom: spacing['3xl'] + miniBarInset,
       }}
     >
       <Text

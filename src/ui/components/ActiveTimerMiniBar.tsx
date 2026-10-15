@@ -1,5 +1,5 @@
 import { usePathname, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppState, Pressable, Text, View } from 'react-native';
 
@@ -8,10 +8,42 @@ import { getProjectById } from '@/data/repositories/projectRepository';
 import { computeActiveElapsedMs } from '@/domain/timer/timerEngine';
 import { formatTimerClock } from '@/lib/time';
 import { useActiveTimerStore } from '@/state/useActiveTimerStore';
-import { Hourglass } from '@/ui/icons';
+import { Hourglass, PauseIcon, PlayIcon } from '@/ui/icons';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 
 const TIMER_ROUTE = '/timer';
+
+const MiniBarInsetContext = createContext(0);
+const MiniBarInsetMeasureContext = createContext<(inset: number) => void>(() => {});
+
+/**
+ * Publishes how much room the mini bar is taking at the bottom of the screen.
+ *
+ * The bar floats above the content rather than taking space from it, so a
+ * scrollable screen has no way of knowing its end is covered. Padding each
+ * screen by hand would mean copying a number that drifts the moment the bar's
+ * padding or type size changes, so the bar measures itself instead and screens
+ * read the measurement.
+ */
+export function MiniBarInsetProvider({ children }: { children: ReactNode }) {
+  const [inset, setInset] = useState(0);
+
+  return (
+    <MiniBarInsetContext.Provider value={inset}>
+      <MiniBarInsetMeasureContext.Provider value={setInset}>
+        {children}
+      </MiniBarInsetMeasureContext.Provider>
+    </MiniBarInsetContext.Provider>
+  );
+}
+
+/**
+ * The space a scrollable screen should leave below its content, so the end of
+ * a list clears the mini bar. Zero while no session is running.
+ */
+export function useMiniBarInset() {
+  return useContext(MiniBarInsetContext);
+}
 
 type ActiveTimerMiniBarProps = {
   bottomOffset: number;
@@ -30,12 +62,14 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
   const timer = useActiveTimerStore((state) => state.timer);
   const pause = useActiveTimerStore((state) => state.pause);
   const resume = useActiveTimerStore((state) => state.resume);
+  const reportInset = useContext(MiniBarInsetMeasureContext);
 
   const [project, setProject] = useState<Project | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
   const projectId = timer?.projectId;
   const isRunning = timer !== null && timer.pausedAt === null;
+  const hidden = !timer || pathname === TIMER_ROUTE;
 
   useEffect(() => {
     if (!projectId) {
@@ -58,13 +92,23 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
     };
   }, [isRunning]);
 
-  if (!timer || pathname === TIMER_ROUTE) {
+  // The screens below need the inset released as soon as the bar goes, not
+  // when it next happens to lay out — otherwise a finished session leaves a
+  // gap at the end of every list.
+  useEffect(() => {
+    if (hidden) {
+      reportInset(0);
+    }
+  }, [hidden, reportInset]);
+
+  if (hidden) {
     return null;
   }
 
   return (
     <Pressable
       onPress={() => router.push(TIMER_ROUTE)}
+      onLayout={(event) => reportInset(event.nativeEvent.layout.height + spacing.md)}
       style={{
         position: 'absolute',
         left: spacing.xl,
@@ -102,15 +146,25 @@ export function ActiveTimerMiniBar({ bottomOffset }: ActiveTimerMiniBarProps) {
         </Text>
       </View>
 
+      {/* The same pairing the timer screen uses: one control, one appearance. */}
       <Pressable
         onPress={isRunning ? pause : resume}
+        accessibilityRole="button"
         style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
           backgroundColor: colors.background,
           borderRadius: radius.sm,
           paddingHorizontal: spacing.lg,
           paddingVertical: spacing.sm,
         }}
       >
+        {isRunning ? (
+          <PauseIcon color={colors.primaryText} size={14} weight="regular" />
+        ) : (
+          <PlayIcon color={colors.primaryText} size={14} weight="regular" />
+        )}
         <Text
           style={{
             fontFamily: fontFamily.body,
